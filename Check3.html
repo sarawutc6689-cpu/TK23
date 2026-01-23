@@ -143,6 +143,33 @@ button:disabled{
       color: var(--secondary-color);
       text-decoration: underline;
     }
+
+  .dash-btn-box{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+.dash-btn{
+  display:inline-block;
+  padding:12px 24px;
+  border-radius:50px;
+  background:linear-gradient(135deg,#6a0dad,#9370db);
+  color:#fff;
+  font-weight:600;
+  text-decoration:none;
+  box-shadow:0 8px 20px rgba(138,43,226,.25);
+  transition:.25s ease;
+}
+
+.dash-btn i{
+  margin-right:8px;
+}
+
+.dash-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 28px rgba(138,43,226,.35);
+}
+
 </style>
 </head>
 
@@ -151,6 +178,15 @@ button:disabled{
   <h1><i class="fas fa-file-invoice"></i> ระบบค้นหาและรับบิล</h1>
   <div class="subtitle">พิมพ์เลขบิล ระบบค้นหาให้อัตโนมัติ</div>
 
+  <div class="dash-btn-box">
+  <a href="https://sarawutc6689-cpu.github.io/TK23/DashBoard.html"
+     target="_blank"
+     class="dash-btn">
+    <i class="fas fa-chart-pie"></i> Dashboard บิลค้าง
+  </a>
+</div>
+
+  
   <div class="search-box">
     <input id="billInput" placeholder="พิมพ์เลขบิล 5 ตัวท้ายสุด">
     <div id="list" class="result-list"></div>
