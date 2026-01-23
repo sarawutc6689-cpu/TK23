@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard บิลค้างรับ</title>
+
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{
+  margin:0;
+  background:linear-gradient(135deg,#f3ecff,#ffffff);
+  min-height:100vh;
+}
+.container{
+  max-width:1000px;
+  margin:40px auto;
+  padding:30px;
+}
+h1{
+  text-align:center;
+  color:#6a0dad;
+  margin-bottom:30px;
+}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+}
+.card{
+  background:#fff;
+  border-radius:20px;
+  padding:25px;
+  box-shadow:0 12px 30px rgba(138,43,226,.15);
+}
+.card h2{
+  margin:0;
+  font-size:2.2rem;
+}
+.card p{
+  margin:5px 0 0;
+  color:#777;
+  font-weight:600;
+}
+.total{color:#6a0dad}
+.pending{color:#f57c00}
+.done{color:#2e7d32}
+
+.table-box{
+  margin-top:40px;
+  background:#fff;
+  border-radius:20px;
+  padding:25px;
+  box-shadow:0 12px 30px rgba(0,0,0,.1);
+}
+.table-box h3{
+  margin-top:0;
+  color:#6a0dad;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  padding:14px;
+  border-bottom:1px solid #eee;
+}
+th{
+  text-align:left;
+  color:#8a6dd8;
+}
+tr:hover{
+  background:#f7f2ff;
+}
+.empty{
+  text-align:center;
+  padding:40px;
+  color:#888;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>📊 Dashboard สรุปบิลค้างรับ</h1>
+
+  <div class="cards">
+    <div class="card">
+      <h2 id="total" class="total">0</h2>
+      <p>บิลทั้งหมด</p>
+    </div>
+    <div class="card">
+      <h2 id="pending" class="pending">0</h2>
+      <p>บิลค้างรับ</p>
+    </div>
+    <div class="card">
+      <h2 id="done" class="done">0</h2>
+      <p>รับบิลแล้ว</p>
+    </div>
+  </div>
+
+  <div class="table-box">
+    <h3>📄 รายการบิลค้างรับ</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>เลขบิล</th>
+          <th>สถานที่</th>
+          <th>รายละเอียด</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div id="empty" class="empty" style="display:none">
+      🎉 ไม่มีบิลค้างรับ
+    </div>
+  </div>
+</div>
+
+<script>
+const SCRIPT_URL = "PUT_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+
+async function loadDashboard(){
+  const res = await fetch(`${SCRIPT_URL}?action=dashboard`);
+  const data = await res.json();
+
+  if(!data.success) return;
+
+  total.textContent = data.total;
+  pending.textContent = data.pendingCount;
+  done.textContent = data.received;
+
+  if(data.pending.length === 0){
+    empty.style.display="block";
+    return;
+  }
+
+  data.pending.forEach(b=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML=`
+      <td>${b.billNo}</td>
+      <td>${b.place}</td>
+      <td>${b.detail}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
