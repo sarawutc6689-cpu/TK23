@@ -3,56 +3,84 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ค้นหาสถานะบิล</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title>ระบบค้นหาและรับบิล</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
+*{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
 body{
-  background: linear-gradient(135deg,#f7f1ff,#ffffff);
-  font-family: 'Segoe UI',sans-serif;
+  margin:0;
+  background:linear-gradient(135deg,#f6f0ff,#ffffff);
+  min-height:100vh;
 }
 .container{
-  max-width:700px;
+  max-width:780px;
   margin:50px auto;
   background:#fff;
-  padding:30px;
-  border-radius:18px;
-  box-shadow:0 15px 40px rgba(138,43,226,.15);
+  padding:35px;
+  border-radius:22px;
+  box-shadow:0 18px 45px rgba(138,43,226,.18);
 }
 h1{
-  color:#6a0dad;
   text-align:center;
+  color:#6a0dad;
+  margin-bottom:10px;
+}
+.subtitle{
+  text-align:center;
+  color:#8a6dd8;
+  margin-bottom:30px;
 }
 .search-box{
-  display:flex;
-  gap:12px;
-  margin-top:25px;
+  position:relative;
 }
-input{
-  flex:1;
-  padding:14px;
-  border-radius:10px;
-  border:2px solid #e0d3ff;
-  font-size:1rem;
+.search-box input{
+  width:100%;
+  padding:16px 18px;
+  border-radius:14px;
+  border:2px solid #e3d7ff;
+  font-size:1.05rem;
+  outline:none;
 }
-button{
-  background:linear-gradient(135deg,#8a2be2,#9370db);
-  color:#fff;
-  border:none;
-  border-radius:10px;
-  padding:0 28px;
-  font-weight:600;
+.search-box input:focus{
+  border-color:#8a2be2;
+  box-shadow:0 0 0 4px rgba(138,43,226,.15);
+}
+.result-list{
+  margin-top:8px;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+.result-item{
+  padding:14px 18px;
+  background:#fff;
+  border-bottom:1px solid #eee;
   cursor:pointer;
 }
-button:disabled{opacity:.5}
-.result{
+.result-item:hover{
+  background:#f3ecff;
+}
+.result-item strong{
+  color:#6a0dad;
+}
+.result-item small{
+  display:block;
+  color:#777;
+  margin-top:2px;
+}
+.card{
   display:none;
   margin-top:30px;
-  background:#f8f4ff;
-  padding:20px;
-  border-radius:14px;
+  background:#f9f5ff;
+  padding:25px;
+  border-radius:18px;
 }
-.label{color:#9370db;font-weight:600}
-.value{margin-bottom:12px}
+.row{margin-bottom:14px}
+.label{
+  color:#8a6dd8;
+  font-weight:600;
+}
 .status{
   display:inline-block;
   padding:6px 18px;
@@ -64,77 +92,134 @@ button:disabled{opacity:.5}
 .update{
   margin-top:20px;
 }
+button{
+  background:linear-gradient(135deg,#8a2be2,#9370db);
+  color:#fff;
+  border:none;
+  padding:14px 26px;
+  border-radius:14px;
+  font-size:1rem;
+  font-weight:600;
+  cursor:pointer;
+}
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
 .message{
-  margin-top:15px;
+  margin-top:20px;
+  text-align:center;
   font-weight:600;
 }
 </style>
 </head>
+
 <body>
-
 <div class="container">
-<h1><i class="fas fa-file-invoice"></i> ตรวจสอบสถานะบิล</h1>
+  <h1><i class="fas fa-file-invoice"></i> ระบบค้นหาและรับบิล</h1>
+  <div class="subtitle">พิมพ์เลขบิล ระบบค้นหาให้อัตโนมัติ</div>
 
-<div class="search-box">
-  <input id="billNo" placeholder="กรอกเลขที่บิล">
-  <button onclick="searchBill()">ค้นหา</button>
-</div>
-
-<div id="result" class="result">
-  <div><span class="label">เลขที่บิล:</span> <span id="rBill"></span></div>
-  <div><span class="label">สถานที่:</span> <span id="rPlace"></span></div>
-  <div><span class="label">รายละเอียด:</span> <span id="rDetail"></span></div>
-  <div>
-    <span class="label">สถานะ:</span>
-    <span id="rStatus" class="status"></span>
+  <div class="search-box">
+    <input id="billInput" placeholder="พิมพ์เลขบิล เช่น 123, INV, 2024">
+    <div id="list" class="result-list"></div>
   </div>
 
-  <div id="updateBox" class="update">
-    <label>
-      <input type="checkbox" id="confirm">
-      ยืนยันการรับบิลแล้ว
-    </label>
-    <br><br>
-    <button id="updateBtn" disabled onclick="updateStatus()">ยืนยันรับบิล</button>
-  </div>
-</div>
+  <div id="card" class="card">
+    <div class="row"><span class="label">เลขที่บิล:</span> <span id="cBill"></span></div>
+    <div class="row"><span class="label">สถานที่:</span> <span id="cPlace"></span></div>
+    <div class="row"><span class="label">รายละเอียด:</span> <span id="cDetail"></span></div>
+    <div class="row">
+      <span class="label">สถานะ:</span>
+      <span id="cStatus" class="status"></span>
+    </div>
 
-<div id="msg" class="message"></div>
+    <div id="updateBox" class="update">
+      <label>
+        <input type="checkbox" id="confirmChk">
+        ยืนยันการรับบิลแล้ว
+      </label>
+      <br><br>
+      <button id="updateBtn" disabled>ยืนยันรับบิล</button>
+    </div>
+  </div>
+
+  <div id="msg" class="message"></div>
 </div>
 
 <script>
-const SCRIPT_URL = "PUT_YOUR_SCRIPT_URL_HERE";
+const SCRIPT_URL = "PUT_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 let currentBill = null;
+let timer = null;
 
-document.getElementById("confirm").onchange = e=>{
-  document.getElementById("updateBtn").disabled = !e.target.checked;
+const billInput = document.getElementById("billInput");
+const list = document.getElementById("list");
+const card = document.getElementById("card");
+const msg = document.getElementById("msg");
+
+const debounce = (fn,delay=400)=> (...args)=>{
+  clearTimeout(timer);
+  timer = setTimeout(()=>fn(...args),delay);
 };
 
-async function searchBill(){
-  const billNo = billNo.value.trim();
-  if(!billNo) return showMsg("กรุณากรอกเลขที่บิล","red");
+billInput.addEventListener("input", debounce(async e=>{
+  const keyword = e.target.value.trim();
+  card.style.display="none";
+  msg.textContent="";
 
-  const res = await fetch(`${SCRIPT_URL}?action=search&billNo=${encodeURIComponent(billNo)}`);
+  if(keyword.length < 2){
+    list.innerHTML="";
+    return;
+  }
+
+  const res = await fetch(
+    `${SCRIPT_URL}?action=search&keyword=${encodeURIComponent(keyword)}`
+  );
   const data = await res.json();
 
   if(!data.success){
-    document.getElementById("result").style.display="none";
-    return showMsg(data.message,"red");
+    list.innerHTML = `<div class="result-item">${data.message}</div>`;
+    return;
   }
 
-  currentBill = billNo;
-  document.getElementById("result").style.display="block";
-  rBill.textContent = billNo;
-  rPlace.textContent = data.place;
-  rDetail.textContent = data.detail;
+  renderList(data.results);
+}));
 
-  rStatus.textContent = data.status || "รอรับบิล";
-  rStatus.className = "status " + (data.status==="รับบิลแล้ว"?"done":"wait");
-
-  updateBox.style.display = data.status==="รับบิลแล้ว"?"none":"block";
+function renderList(results){
+  list.innerHTML="";
+  results.forEach(b=>{
+    const div = document.createElement("div");
+    div.className="result-item";
+    div.innerHTML=`
+      <strong>${b.billNo}</strong>
+      <small>${b.place}</small>
+    `;
+    div.onclick=()=>selectBill(b);
+    list.appendChild(div);
+  });
 }
 
-async function updateStatus(){
+function selectBill(b){
+  currentBill = b.billNo;
+  list.innerHTML="";
+  card.style.display="block";
+
+  cBill.textContent = b.billNo;
+  cPlace.textContent = b.place;
+  cDetail.textContent = b.detail;
+
+  cStatus.textContent = b.status || "รอรับบิล";
+  cStatus.className = "status " + (b.status==="รับบิลแล้ว"?"done":"wait");
+
+  updateBox.style.display = b.status==="รับบิลแล้ว"?"none":"block";
+  confirmChk.checked=false;
+  updateBtn.disabled=true;
+}
+
+confirmChk.onchange = e=>{
+  updateBtn.disabled = !e.target.checked;
+};
+
+updateBtn.onclick = async ()=>{
   const res = await fetch(SCRIPT_URL,{
     method:"POST",
     body:JSON.stringify({
@@ -145,19 +230,16 @@ async function updateStatus(){
   const data = await res.json();
 
   if(data.success){
-    rStatus.textContent="รับบิลแล้ว";
-    rStatus.className="status done";
+    cStatus.textContent="รับบิลแล้ว";
+    cStatus.className="status done";
     updateBox.style.display="none";
-    showMsg("อัพเดทสถานะเรียบร้อยแล้ว","green");
+    msg.style.color="green";
+    msg.textContent="อัพเดทสถานะเรียบร้อยแล้ว";
   }else{
-    showMsg(data.message,"red");
+    msg.style.color="red";
+    msg.textContent=data.message;
   }
-}
-
-function showMsg(t,c){
-  msg.textContent=t;
-  msg.style.color=c;
-}
+};
 </script>
 </body>
 </html>
