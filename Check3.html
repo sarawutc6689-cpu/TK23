@@ -6,7 +6,7 @@
     <title>ระบบค้นหาบิล - โทนสีม่วง</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-       * {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -118,16 +118,38 @@
             border-left: 5px solid #9370db;
             font-size: 0.95rem;
             color: #555;
+            margin-bottom: 15px;
         }
         
-        .test-mode-notice {
-            background-color: #e3f2fd;
-            color: #1565c0;
-            padding: 12px 15px;
-            border-radius: 10px;
+        .test-data {
+            background-color: #f0f7ff;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px dashed #9370db;
             margin-top: 15px;
-            font-size: 0.9rem;
-            border-left: 4px solid #2196f3;
+        }
+        
+        .test-data h4 {
+            color: #6a0dad;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-data ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .test-data li {
+            padding: 8px 0;
+            color: #555;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        
+        .test-data li:last-child {
+            border-bottom: none;
         }
         
         .result-section {
@@ -168,21 +190,18 @@
             padding: 8px 20px;
             border-radius: 50px;
             font-weight: 600;
-            background-color: #e6f7e9;
-            color: #2e7d32;
-            border: 1px solid #c8e6c9;
         }
         
         .bill-status.received {
             background-color: #e6f7e9;
             color: #2e7d32;
-            border-color: #c8e6c9;
+            border: 1px solid #c8e6c9;
         }
         
         .bill-status.waiting {
             background-color: #fff8e1;
             color: #f57c00;
-            border-color: #ffe0b2;
+            border: 1px solid #ffe0b2;
         }
         
         .bill-details {
@@ -315,29 +334,6 @@
             padding: 20px;
         }
         
-        .test-data {
-            margin-top: 20px;
-            background-color: #f0f7ff;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px dashed #9370db;
-        }
-        
-        .test-data h4 {
-            color: #6a0dad;
-            margin-bottom: 10px;
-        }
-        
-        .test-data ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        
-        .test-data li {
-            padding: 5px 0;
-            color: #555;
-        }
-        
         @media (max-width: 768px) {
             .search-box {
                 flex-direction: column;
@@ -355,19 +351,25 @@
             h1 {
                 font-size: 2rem;
             }
+            
+            .result-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-      <header>
+        <header>
             <h1><i class="fas fa-file-invoice"></i> ระบบค้นหาบิล</h1>
             <p class="subtitle">ค้นหาบิลด้วยตัวเลข 5 ตัวท้ายในคอลัมน์ A</p>
         </header>
         
         <section class="search-section">
             <div class="search-box">
-                <input type="text" id="lastDigits" class="search-input" placeholder="กรอกตัวเลข 5 ตัวท้ายของบิล (เช่น 12345, 67890, ...)" autocomplete="off">
+                <input type="text" id="lastDigits" class="search-input" placeholder="กรอกตัวเลข 5 ตัวท้ายของบิล (เช่น 99885, 12345, ...)" autocomplete="off">
                 <button id="searchBtn" class="search-btn">
                     <i class="fas fa-search"></i> ค้นหาบิล
                 </button>
@@ -375,17 +377,13 @@
             <div class="instructions">
                 <i class="fas fa-info-circle"></i> ระบบจะค้นหาบิลจากตัวเลข 5 ตัวท้ายในคอลัมน์ A ของ Google Sheets หากพบข้อมูลจะแสดงรายละเอียดบิล และสามารถอัพเดทสถานะเป็น "รับบิลแล้ว" พร้อมบันทึกวันที่อัพเดทได้
             </div>
-            <div class="test-mode-notice">
-                <i class="fas fa-exclamation-circle"></i> กำลังใช้โหมดทดสอบ: ระบบกำลังใช้ข้อมูลจำลองเนื่องจาก Google Apps Script ยังไม่รองรับการค้นหาตามตัวเลข 5 ตัวท้าย
-            </div>
             <div class="test-data">
-                <h4><i class="fas fa-vial"></i> ข้อมูลทดสอบสำหรับค้นหา:</h4>
+                <h4><i class="fas fa-vial"></i> ข้อมูลตัวอย่างสำหรับทดสอบ:</h4>
                 <ul>
-                    <li><strong>12345</strong> - บิล A001, สถานที่: สำนักงานใหญ่</li>
-                    <li><strong>67890</strong> - บิล B002, สถานที่: สาขาหลัก</li>
-                    <li><strong>54321</strong> - บิล C003, สถานที่: ศูนย์กระจายสินค้า</li>
-                    <li><strong>98765</strong> - บิล D004, สถานที่: โครงการใหม่</li>
-                    <li><strong>11223</strong> - บิล E005, สถานที่: สำนักงานสาขา</li>
+                    <li><strong>99885</strong> - บิล INV-2024-99885, สถานที่: สำนักงานใหญ่</li>
+                    <li><strong>12345</strong> - บิล INV-2023-001-12345, สถานที่: สำนักงานใหญ่</li>
+                    <li><strong>67890</strong> - บิล INV-2023-002-67890, สถานที่: สาขาหลัก (รับบิลแล้ว)</li>
+                    <li><strong>54321</strong> - บิล INV-2023-003-54321, สถานที่: โกดังหลัก</li>
                 </ul>
             </div>
         </section>
@@ -421,7 +419,7 @@
         
         <footer>
             <p>ระบบเชื่อมต่อกับ Google Sheets | โทนสีม่วงขาว | สำหรับใช้บน GitHub</p>
-            <p>© 2023 ระบบจัดการบิลด้วย HTML</p>
+            <p>© 2024 ระบบจัดการบิลด้วย HTML</p>
         </footer>
     </div>
     
@@ -433,10 +431,71 @@
     
     <script>
         // ตั้งค่าคงที่ - Google Apps Script URL
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxanULNaPJaiL9W5OEVYljWoyOdFQxElo7E9oHH--F-eC3H90DAfNOjEp7c0ChQOsM5/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywIMMbXhkZE_3OhdGtjkRsU15fXFLHgO_4H1qfkMXr1s23ivC5b1PA9E1BOKQMm6AS/exec';
         
-        // ข้อมูลชั่วคราวสำหรับเก็บผลลัพธ์
-        let searchResult = null;
+        // อ้างอิง DOM elements
+        const lastDigitsInput = document.getElementById('lastDigits');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultSection = document.getElementById('resultSection');
+        const emptyState = document.getElementById('emptyState');
+        const billStatus = document.getElementById('billStatus');
+        const billInfo = document.getElementById('billInfo');
+        const confirmCheckbox = document.getElementById('confirmCheckbox');
+        const updateBtn = document.getElementById('updateBtn');
+        const message = document.getElementById('message');
+        
+        // ฟังก์ชันแสดงข้อมูลบิล
+        function displayBillData(billData) {
+            // ซ่อน empty state และแสดงผลลัพธ์
+            emptyState.style.display = 'none';
+            resultSection.classList.add('active');
+            
+            // แสดงสถานะบิล
+            const status = billData.status || 'รอรับบิล';
+            billStatus.textContent = status;
+            
+            if (status === 'รับบิลแล้ว') {
+                billStatus.className = 'bill-status received';
+                document.getElementById('updateSection').style.display = 'none';
+            } else {
+                billStatus.className = 'bill-status waiting';
+                document.getElementById('updateSection').style.display = 'block';
+            }
+            
+            // แสดงรายละเอียดบิล
+            billInfo.innerHTML = `
+                <div class="detail-item">
+                    <div class="detail-label">เลขที่บิล (เต็ม)</div>
+                    <div class="detail-value">${billData.fullBillNumber || billData.billNumber || '-'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">ตัวเลข 5 ตัวท้าย</div>
+                    <div class="detail-value">${billData.lastDigits || '-'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">สถานที่</div>
+                    <div class="detail-value">${billData.location || '-'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">รายละเอียด</div>
+                    <div class="detail-value">${billData.details || '-'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">สถานะ</div>
+                    <div class="detail-value">${billData.status || 'รอรับบิล'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">วันที่อัพเดทล่าสุด</div>
+                    <div class="detail-value">${billData.updateDate || '-'}</div>
+                </div>
+            `;
+            
+            // รีเซ็ต checkbox และปุ่มอัพเดท
+            confirmCheckbox.checked = false;
+            updateBtn.disabled = true;
+            message.className = 'message';
+            message.style.display = 'none';
+        }
         
         // ฟังก์ชันค้นหาบิลด้วย iframe
         function searchBill() {
@@ -628,6 +687,12 @@
                                 
                                 // ซ่อนส่วนอัพเดท
                                 document.getElementById('updateSection').style.display = 'none';
+                                
+                                // รีเฟรชข้อมูล
+                                setTimeout(() => {
+                                    searchBill();
+                                }, 1000);
+                                
                             } else {
                                 showMessage('เกิดข้อผิดพลาดในการอัพเดท: ' + data.message, 'error');
                             }
@@ -654,59 +719,6 @@
             form.submit();
         }
         
-        // ฟังก์ชันแสดงข้อมูลบิล
-        function displayBillData(billData) {
-            // ซ่อน empty state และแสดงผลลัพธ์
-            emptyState.style.display = 'none';
-            resultSection.classList.add('active');
-            
-            // แสดงสถานะบิล
-            const status = billData.status || 'รอรับบิล';
-            billStatus.textContent = status;
-            
-            if (status === 'รับบิลแล้ว') {
-                billStatus.className = 'bill-status received';
-                document.getElementById('updateSection').style.display = 'none';
-            } else {
-                billStatus.className = 'bill-status waiting';
-                document.getElementById('updateSection').style.display = 'block';
-            }
-            
-            // แสดงรายละเอียดบิล
-            billInfo.innerHTML = `
-                <div class="detail-item">
-                    <div class="detail-label">เลขที่บิล (เต็ม)</div>
-                    <div class="detail-value">${billData.fullBillNumber || billData.billNumber || '-'}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">ตัวเลข 5 ตัวท้าย</div>
-                    <div class="detail-value">${billData.lastDigits || '-'}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">สถานที่</div>
-                    <div class="detail-value">${billData.location || '-'}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">รายละเอียด</div>
-                    <div class="detail-value">${billData.details || '-'}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">สถานะ</div>
-                    <div class="detail-value">${billData.status || 'รอรับบิล'}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">วันที่อัพเดทล่าสุด</div>
-                    <div class="detail-value">${billData.updateDate || '-'}</div>
-                </div>
-            `;
-            
-            // รีเซ็ต checkbox และปุ่มอัพเดท
-            confirmCheckbox.checked = false;
-            updateBtn.disabled = true;
-            message.className = 'message';
-            message.style.display = 'none';
-        }
-        
         // ฟังก์ชันแสดงข้อความ
         function showMessage(text, type) {
             message.textContent = text;
@@ -721,6 +733,7 @@
         
         // Event Listeners
         searchBtn.addEventListener('click', searchBill);
+        
         lastDigitsInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 searchBill();
@@ -738,9 +751,30 @@
         
         updateBtn.addEventListener('click', updateBillStatus);
         
-        // เริ่มต้น
-        console.log('ระบบค้นหาบิลพร้อมใช้งาน');
-        showMessage('กรุณากรอกตัวเลข 5 หลักเช่น 12345 เพื่อเริ่มต้นการค้นหา', 'info');
+        // เริ่มต้นระบบ
+        function initSystem() {
+            console.log('ระบบค้นหาบิลพร้อมใช้งาน');
+            console.log('Google Apps Script URL:', SCRIPT_URL);
+            showMessage('ระบบพร้อมใช้งาน กรุณากรอกตัวเลข 5 หลักเพื่อค้นหาบิล', 'info');
+            
+            // ทดสอบการเชื่อมต่อ
+            testConnection();
+        }
+        
+        // ทดสอบการเชื่อมต่อ
+        async function testConnection() {
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=test&t=${Date.now()}`);
+                if (response.ok) {
+                    console.log('เชื่อมต่อกับ Google Apps Script สำเร็จ');
+                }
+            } catch (error) {
+                console.log('เชื่อมต่อกับ Google Apps Script ด้วย iframe');
+            }
+        }
+        
+        // เรียกใช้เมื่อโหลดหน้าเว็บเสร็จ
+        window.addEventListener('DOMContentLoaded', initSystem);
     </script>
 </body>
 </html>
