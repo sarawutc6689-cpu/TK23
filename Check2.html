@@ -120,6 +120,16 @@
             color: #555;
         }
         
+        .test-mode-notice {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            border-left: 4px solid #2196f3;
+        }
+        
         .result-section {
             background-color: white;
             padding: 30px;
@@ -278,6 +288,13 @@
             display: block;
         }
         
+        .message.info {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #bbdefb;
+            display: block;
+        }
+        
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -296,6 +313,29 @@
             color: #9370db;
             font-size: 0.9rem;
             padding: 20px;
+        }
+        
+        .test-data {
+            margin-top: 20px;
+            background-color: #f0f7ff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px dashed #9370db;
+        }
+        
+        .test-data h4 {
+            color: #6a0dad;
+            margin-bottom: 10px;
+        }
+        
+        .test-data ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .test-data li {
+            padding: 5px 0;
+            color: #555;
         }
         
         @media (max-width: 768px) {
@@ -334,6 +374,19 @@
             </div>
             <div class="instructions">
                 <i class="fas fa-info-circle"></i> ระบบจะค้นหาบิลจากตัวเลข 5 ตัวท้ายในคอลัมน์ A ของ Google Sheets หากพบข้อมูลจะแสดงรายละเอียดบิล และสามารถอัพเดทสถานะเป็น "รับบิลแล้ว" พร้อมบันทึกวันที่อัพเดทได้
+            </div>
+            <div class="test-mode-notice">
+                <i class="fas fa-exclamation-circle"></i> กำลังใช้โหมดทดสอบ: ระบบกำลังใช้ข้อมูลจำลองเนื่องจาก Google Apps Script ยังไม่รองรับการค้นหาตามตัวเลข 5 ตัวท้าย
+            </div>
+            <div class="test-data">
+                <h4><i class="fas fa-vial"></i> ข้อมูลทดสอบสำหรับค้นหา:</h4>
+                <ul>
+                    <li><strong>12345</strong> - บิล A001, สถานที่: สำนักงานใหญ่</li>
+                    <li><strong>67890</strong> - บิล B002, สถานที่: สาขาหลัก</li>
+                    <li><strong>54321</strong> - บิล C003, สถานที่: ศูนย์กระจายสินค้า</li>
+                    <li><strong>98765</strong> - บิล D004, สถานที่: โครงการใหม่</li>
+                    <li><strong>11223</strong> - บิล E005, สถานที่: สำนักงานสาขา</li>
+                </ul>
             </div>
         </section>
         
@@ -375,6 +428,50 @@
     <script>
         // ตั้งค่าคงที่ - Google Apps Script URL
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxESn5MldSojk2mrQung2aSccfmOpaIkC7wwAqwb-lX-6Rx_5xVNP_ME2LhLEqErXK/exec';
+        
+        // ข้อมูลจำลองสำหรับทดสอบ
+        const mockBillData = [
+            {
+                lastDigits: '12345',
+                fullBillNumber: 'A001-12345',
+                location: 'สำนักงานใหญ่',
+                details: 'ค่าบริการจัดการระบบ IT เดือนตุลาคม',
+                status: 'รอรับบิล',
+                updateDate: '10 ตุลาคม 2023'
+            },
+            {
+                lastDigits: '67890',
+                fullBillNumber: 'B002-67890',
+                location: 'สาขาหลัก',
+                details: 'ค่าอุปกรณ์สำนักงานและวัสดุสิ้นเปลือง',
+                status: 'รับบิลแล้ว',
+                updateDate: '12 ตุลาคม 2023'
+            },
+            {
+                lastDigits: '54321',
+                fullBillNumber: 'C003-54321',
+                location: 'ศูนย์กระจายสินค้า',
+                details: 'ค่าขนส่งและโลจิสติกส์',
+                status: 'รอรับบิล',
+                updateDate: '8 ตุลาคม 2023'
+            },
+            {
+                lastDigits: '98765',
+                fullBillNumber: 'D004-98765',
+                location: 'โครงการใหม่',
+                details: 'ค่าก่อสร้างและปรับปรุงอาคาร',
+                status: 'รอรับบิล',
+                updateDate: '5 ตุลาคม 2023'
+            },
+            {
+                lastDigits: '11223',
+                fullBillNumber: 'E005-11223',
+                location: 'สำนักงานสาขา',
+                details: 'ค่าเช่าอาคารและสาธารณูปโภค',
+                status: 'รับบิลแล้ว',
+                updateDate: '15 ตุลาคม 2023'
+            }
+        ];
         
         // อ้างอิง DOM elements
         const lastDigitsInput = document.getElementById('lastDigits');
@@ -446,7 +543,31 @@
             message.style.display = 'none';
         }
         
-        // ฟังก์ชันค้นหาบิล
+        // ฟังก์ชันค้นหาบิลจากข้อมูลจำลอง
+        function searchMockBill(lastDigits) {
+            return new Promise((resolve) => {
+                // จำลองการดีเลย์ในการค้นหา
+                setTimeout(() => {
+                    const foundBill = mockBillData.find(bill => bill.lastDigits === lastDigits);
+                    
+                    if (foundBill) {
+                        resolve({
+                            success: true,
+                            billData: foundBill,
+                            message: 'พบข้อมูลบิลในฐานข้อมูลจำลอง'
+                        });
+                    } else {
+                        resolve({
+                            success: true,
+                            billData: null,
+                            message: 'ไม่พบข้อมูลบิลในฐานข้อมูลจำลอง'
+                        });
+                    }
+                }, 800); // จำลองการดีเลย์ 0.8 วินาที
+            });
+        }
+        
+        // ฟังก์ชันค้นหาบิล (ใช้ข้อมูลจำลอง)
         async function searchBill() {
             const lastDigits = lastDigitsInput.value.trim();
             
@@ -466,29 +587,82 @@
             searchBtn.disabled = true;
             
             try {
+                // ลองเชื่อมต่อกับ Google Apps Script ก่อน
                 const response = await fetch(`${SCRIPT_URL}?action=searchByLastDigits&lastDigits=${encodeURIComponent(lastDigits)}`);
-                const data = await response.json();
                 
-                if (data.success) {
-                    if (data.billData) {
-                        displayBillData(data.billData);
-                        showMessage('พบข้อมูลบิลเรียบร้อยแล้ว', 'success');
+                if (response.ok) {
+                    // หากเชื่อมต่อได้สำเร็จ
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        if (data.billData) {
+                            displayBillData(data.billData);
+                            showMessage('พบข้อมูลบิลเรียบร้อยแล้ว (จาก Google Sheets)', 'success');
+                        } else {
+                            // ลองค้นหาจากข้อมูลจำลอง
+                            const mockResult = await searchMockBill(lastDigits);
+                            
+                            if (mockResult.billData) {
+                                displayBillData(mockResult.billData);
+                                showMessage('พบข้อมูลบิลในฐานข้อมูลจำลอง', 'info');
+                            } else {
+                                showMessage('ไม่พบข้อมูลบิลที่ค้นหา', 'error');
+                                resultSection.classList.remove('active');
+                                emptyState.style.display = 'block';
+                                emptyState.innerHTML = `
+                                    <i class="fas fa-search"></i>
+                                    <h3>ไม่พบข้อมูลบิลเลขท้าย "${lastDigits}"</h3>
+                                    <p>กรุณาตรวจสอบตัวเลข 5 หลักและลองอีกครั้ง</p>
+                                `;
+                            }
+                        }
                     } else {
-                        showMessage('ไม่พบข้อมูลบิลที่ค้นหา', 'error');
+                        showMessage('เกิดข้อผิดพลาดในการค้นหา: ' + data.message, 'error');
+                    }
+                } else {
+                    // หากไม่สามารถเชื่อมต่อกับ Google Apps Script ได้
+                    console.log('ไม่สามารถเชื่อมต่อกับ Google Apps Script ได้ กำลังใช้ข้อมูลจำลอง...');
+                    
+                    // ใช้ข้อมูลจำลองแทน
+                    const mockResult = await searchMockBill(lastDigits);
+                    
+                    if (mockResult.billData) {
+                        displayBillData(mockResult.billData);
+                        showMessage('พบข้อมูลบิลในฐานข้อมูลจำลอง (โหมดทดสอบ)', 'info');
+                    } else {
+                        showMessage('ไม่พบข้อมูลบิลที่ค้นหาในฐานข้อมูลจำลอง', 'error');
                         resultSection.classList.remove('active');
                         emptyState.style.display = 'block';
                         emptyState.innerHTML = `
                             <i class="fas fa-search"></i>
                             <h3>ไม่พบข้อมูลบิลเลขท้าย "${lastDigits}"</h3>
                             <p>กรุณาตรวจสอบตัวเลข 5 หลักและลองอีกครั้ง</p>
+                            <p><small>กำลังใช้งานในโหมดทดสอบ</small></p>
                         `;
                     }
-                } else {
-                    showMessage('เกิดข้อผิดพลาดในการค้นหา: ' + data.message, 'error');
                 }
             } catch (error) {
                 console.error('Error searching bill:', error);
-                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์', 'error');
+                
+                // หากเกิดข้อผิดพลาด ให้ใช้ข้อมูลจำลองแทน
+                console.log('เกิดข้อผิดพลาดในการเชื่อมต่อ กำลังใช้ข้อมูลจำลอง...');
+                
+                const mockResult = await searchMockBill(lastDigits);
+                
+                if (mockResult.billData) {
+                    displayBillData(mockResult.billData);
+                    showMessage('พบข้อมูลบิลในฐานข้อมูลจำลอง (โหมดทดสอบ)', 'info');
+                } else {
+                    showMessage('ไม่พบข้อมูลบิลที่ค้นหาในฐานข้อมูลจำลอง', 'error');
+                    resultSection.classList.remove('active');
+                    emptyState.style.display = 'block';
+                    emptyState.innerHTML = `
+                        <i class="fas fa-search"></i>
+                        <h3>ไม่พบข้อมูลบิลเลขท้าย "${lastDigits}"</h3>
+                        <p>กรุณาตรวจสอบตัวเลข 5 หลักและลองอีกครั้ง</p>
+                        <p><small>กำลังใช้งานในโหมดทดสอบ</small></p>
+                    `;
+                }
             } finally {
                 // รีเซ็ตปุ่มค้นหา
                 searchBtn.innerHTML = '<i class="fas fa-search"></i> ค้นหาบิล';
@@ -496,7 +670,7 @@
             }
         }
         
-        // ฟังก์ชันอัพเดทสถานะบิล
+        // ฟังก์ชันอัพเดทสถานะบิล (ใช้ข้อมูลจำลอง)
         async function updateBillStatus() {
             const lastDigits = lastDigitsInput.value.trim();
             
@@ -510,22 +684,24 @@
             updateBtn.disabled = true;
             
             try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'updateByLastDigits',
-                        lastDigits: lastDigits,
-                        status: 'รับบิลแล้ว'
-                    })
-                });
+                // จำลองการอัพเดทสถานะ
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 
-                const data = await response.json();
+                // อัพเดทสถานะในข้อมูลจำลอง
+                const billIndex = mockBillData.findIndex(bill => bill.lastDigits === lastDigits);
                 
-                if (data.success) {
-                    showMessage('อัพเดทสถานะบิลเรียบร้อยแล้ว', 'success');
+                if (billIndex !== -1) {
+                    // อัพเดทข้อมูลใน mock data
+                    mockBillData[billIndex].status = 'รับบิลแล้ว';
+                    mockBillData[billIndex].updateDate = new Date().toLocaleDateString('th-TH', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    showMessage('อัพเดทสถานะบิลเรียบร้อยแล้ว (โหมดทดสอบ)', 'success');
                     
                     // อัพเดท UI ให้สะท้อนการเปลี่ยนแปลง
                     billStatus.textContent = 'รับบิลแล้ว';
@@ -548,11 +724,11 @@
                     // ซ่อนส่วนอัพเดท
                     document.getElementById('updateSection').style.display = 'none';
                 } else {
-                    showMessage('เกิดข้อผิดพลาดในการอัพเดท: ' + data.message, 'error');
+                    showMessage('ไม่พบข้อมูลบิลสำหรับอัพเดท', 'error');
                 }
             } catch (error) {
                 console.error('Error updating bill:', error);
-                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์', 'error');
+                showMessage('เกิดข้อผิดพลาดในการอัพเดทสถานะ', 'error');
             } finally {
                 // รีเซ็ตปุ่มอัพเดท
                 updateBtn.innerHTML = '<i class="fas fa-check-circle"></i> อัพเดทสถานะเป็น "รับบิลแล้ว"';
@@ -567,12 +743,10 @@
             message.className = `message ${type}`;
             message.style.display = 'block';
             
-            // ซ่อนข้อความหลังจาก 5 วินาที (ยกเว้นข้อความ error)
-            if (type !== 'error') {
-                setTimeout(() => {
-                    message.style.display = 'none';
-                }, 5000);
-            }
+            // ซ่อนข้อความหลังจาก 5 วินาที
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
         }
         
         // Event Listeners
@@ -595,14 +769,18 @@
         
         updateBtn.addEventListener('click', updateBillStatus);
         
-        // ตัวอย่างข้อมูลสำหรับทดสอบ (ถ้าต้องการทดสอบโดยไม่เชื่อมต่อกับ Google Apps Script)
+        // ตัวอย่างข้อมูลสำหรับทดสอบ
         function setupTestMode() {
-            console.log('ระบบค้นหาบิลด้วยตัวเลข 5 ตัวท้ายพร้อมใช้งาน');
+            console.log('ระบบค้นหาบิลด้วยตัวเลข 5 ตัวท้ายพร้อมใช้งาน (โหมดทดสอบ)');
             console.log('URL ของ Google Apps Script:', SCRIPT_URL);
-            console.log('ระบบจะค้นหาจากตัวเลข 5 ตัวท้ายในคอลัมน์ A ของ Google Sheets');
+            console.log('ระบบจะพยายามเชื่อมต่อกับ Google Apps Script ก่อน หากไม่ได้จะใช้ข้อมูลจำลอง');
+            console.log('ข้อมูลทดสอบที่มี: ', mockBillData.map(bill => bill.lastDigits).join(', '));
             
             // เพิ่มตัวอย่างข้อมูลในช่องค้นหาเพื่อให้ทดสอบง่าย
             lastDigitsInput.placeholder = "กรอกตัวเลข 5 ตัวท้าย (เช่น 12345, 67890, ...)";
+            
+            // แสดงข้อความแนะนำ
+            showMessage('ระบบกำลังทำงานในโหมดทดสอบ กรุณาลองค้นหาด้วยตัวเลข 5 หลักเช่น 12345, 67890', 'info');
         }
         
         // เรียกใช้เมื่อโหลดหน้าเว็บเสร็จ
