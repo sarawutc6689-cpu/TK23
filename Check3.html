@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบค้นหาบิล - โทนสีม่วง</title>
+    <title>ระบบค้นหาบิลด้วยตัวเลข 5 ตัวท้าย</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Prompt', 'Sarabun', sans-serif;
         }
         
         body {
@@ -21,19 +22,20 @@
         }
         
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
         
         header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             padding: 30px 20px;
-            background-color: #fff;
+            background: linear-gradient(135deg, #8a2be2 0%, #6a0dad 100%);
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(106, 13, 173, 0.1);
+            box-shadow: 0 10px 30px rgba(106, 13, 173, 0.3);
             position: relative;
             overflow: hidden;
+            color: white;
         }
         
         header::before {
@@ -41,20 +43,36 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
+            right: 0;
             height: 5px;
-            background: linear-gradient(90deg, #8a2be2, #9370db, #8a2be2);
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
         }
         
         h1 {
-            color: #6a0dad;
             font-size: 2.5rem;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
         }
         
         .subtitle {
-            color: #9370db;
             font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .system-status {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+        
+        .system-status i {
+            margin-right: 8px;
         }
         
         .search-section {
@@ -73,12 +91,15 @@
         
         .search-input {
             flex: 1;
-            padding: 15px 20px;
+            padding: 18px 20px;
             border: 2px solid #e6d6ff;
             border-radius: 12px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             outline: none;
             transition: all 0.3s;
+            text-align: center;
+            letter-spacing: 3px;
+            font-weight: 600;
         }
         
         .search-input:focus {
@@ -90,7 +111,7 @@
             background: linear-gradient(135deg, #8a2be2, #9370db);
             color: white;
             border: none;
-            padding: 0 35px;
+            padding: 0 40px;
             border-radius: 12px;
             font-size: 1.1rem;
             font-weight: 600;
@@ -107,49 +128,35 @@
             box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
         }
         
-        .search-btn:active {
-            transform: translateY(0);
+        .quick-search {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .quick-search-btn {
+            padding: 8px 15px;
+            background: #f0e6ff;
+            border: 2px solid #d4c1ff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .quick-search-btn:hover {
+            background: #e6d6ff;
+            transform: translateY(-2px);
         }
         
         .instructions {
             background-color: #f8f4ff;
-            padding: 15px;
+            padding: 20px;
             border-radius: 12px;
             border-left: 5px solid #9370db;
-            font-size: 0.95rem;
-            color: #555;
-            margin-bottom: 15px;
-        }
-        
-        .test-data {
-            background-color: #f0f7ff;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px dashed #9370db;
-            margin-top: 15px;
-        }
-        
-        .test-data h4 {
-            color: #6a0dad;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .test-data ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        
-        .test-data li {
-            padding: 8px 0;
-            color: #555;
-            border-bottom: 1px dashed #e0e0e0;
-        }
-        
-        .test-data li:last-child {
-            border-bottom: none;
+            margin-top: 20px;
         }
         
         .result-section {
@@ -187,9 +194,10 @@
         
         .bill-status {
             display: inline-block;
-            padding: 8px 20px;
+            padding: 10px 25px;
             border-radius: 50px;
             font-weight: 600;
+            font-size: 1rem;
         }
         
         .bill-status.received {
@@ -206,63 +214,76 @@
         
         .bill-details {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
         
         .detail-item {
-            background-color: #f9f5ff;
-            padding: 20px;
-            border-radius: 12px;
+            background: linear-gradient(135deg, #f9f5ff 0%, #f3e9ff 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #e6d6ff;
+            transition: transform 0.3s;
+        }
+        
+        .detail-item:hover {
+            transform: translateY(-5px);
         }
         
         .detail-label {
             font-size: 0.9rem;
             color: #9370db;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .detail-value {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: #333;
             word-break: break-word;
+            font-weight: 500;
         }
         
         .update-section {
-            background-color: #f9f5ff;
-            padding: 25px;
+            background: linear-gradient(135deg, #f8f4ff 0%, #f0e6ff 100%);
+            padding: 30px;
             border-radius: 15px;
-            margin-top: 20px;
+            margin-top: 30px;
+            border: 2px dashed #9370db;
         }
         
         .checkbox-container {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .checkbox-container input[type="checkbox"] {
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             accent-color: #8a2be2;
+            cursor: pointer;
         }
         
         .checkbox-label {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 600;
             color: #6a0dad;
+            cursor: pointer;
         }
         
         .update-btn {
             background: linear-gradient(135deg, #8a2be2, #9370db);
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 18px 30px;
             border-radius: 12px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
@@ -284,44 +305,56 @@
             cursor: not-allowed;
         }
         
-        .message {
-            padding: 15px;
-            border-radius: 12px;
+        .admin-section {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 25px;
+            border-radius: 15px;
             margin-top: 20px;
-            text-align: center;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .admin-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .admin-btn {
+            padding: 12px 20px;
+            background: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
             font-weight: 600;
-            display: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
         }
         
-        .message.success {
-            background-color: #e6f7e9;
-            color: #2e7d32;
-            border: 1px solid #c8e6c9;
-            display: block;
+        .admin-btn:hover {
+            background: #1976d2;
+            transform: translateY(-2px);
         }
         
-        .message.error {
-            background-color: #ffebee;
-            color: #c62828;
-            border: 1px solid #ffcdd2;
-            display: block;
+        .admin-btn.setup {
+            background: #4caf50;
         }
         
-        .message.info {
-            background-color: #e3f2fd;
-            color: #1565c0;
-            border: 1px solid #bbdefb;
-            display: block;
+        .admin-btn.setup:hover {
+            background: #388e3c;
         }
         
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 80px 20px;
             color: #777;
         }
         
         .empty-state i {
-            font-size: 4rem;
+            font-size: 5rem;
             color: #e6d6ff;
             margin-bottom: 20px;
         }
@@ -334,13 +367,39 @@
             padding: 20px;
         }
         
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .connection-status.connected {
+            color: #2e7d32;
+            border: 2px solid #c8e6c9;
+        }
+        
+        .connection-status.disconnected {
+            color: #c62828;
+            border: 2px solid #ffcdd2;
+        }
+        
         @media (max-width: 768px) {
             .search-box {
                 flex-direction: column;
             }
             
             .search-btn {
-                padding: 15px;
+                padding: 18px;
                 justify-content: center;
             }
             
@@ -350,48 +409,108 @@
             
             h1 {
                 font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
             }
             
             .result-header {
                 flex-direction: column;
-                align-items: flex-start;
                 gap: 15px;
+                text-align: center;
             }
+            
+            .admin-buttons {
+                flex-direction: column;
+            }
+            
+            .connection-status {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-bottom: 20px;
+            }
+        }
+        
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            to { left: 100%; }
         }
     </style>
 </head>
 <body>
+    <div id="connectionStatus" class="connection-status">
+        <i class="fas fa-circle"></i>
+        <span>กำลังเชื่อมต่อ...</span>
+    </div>
+    
     <div class="container">
         <header>
-            <h1><i class="fas fa-file-invoice"></i> ระบบค้นหาบิล</h1>
-            <p class="subtitle">ค้นหาบิลด้วยตัวเลข 5 ตัวท้ายในคอลัมน์ A</p>
+            <h1>
+                <i class="fas fa-file-invoice"></i>
+                ระบบค้นหาบิลด้วยตัวเลข 5 ตัวท้าย
+            </h1>
+            <p class="subtitle">ค้นหาและอัพเดทสถานะใบเสร็จรับเงินด้วยตัวเลข 5 หลักท้าย</p>
+            <div class="system-status">
+                <i class="fas fa-database"></i>
+                <span id="systemInfo">กำลังตรวจสอบระบบ...</span>
+            </div>
         </header>
         
         <section class="search-section">
             <div class="search-box">
-                <input type="text" id="lastDigits" class="search-input" placeholder="กรอกตัวเลข 5 ตัวท้ายของบิล (เช่น 99885, 12345, ...)" autocomplete="off">
+                <input type="text" 
+                       id="lastDigits" 
+                       class="search-input" 
+                       placeholder="กรอกตัวเลข 5 ตัวท้ายของบิล"
+                       maxlength="5"
+                       autocomplete="off"
+                       autofocus>
                 <button id="searchBtn" class="search-btn">
                     <i class="fas fa-search"></i> ค้นหาบิล
                 </button>
             </div>
-            <div class="instructions">
-                <i class="fas fa-info-circle"></i> ระบบจะค้นหาบิลจากตัวเลข 5 ตัวท้ายในคอลัมน์ A ของ Google Sheets หากพบข้อมูลจะแสดงรายละเอียดบิล และสามารถอัพเดทสถานะเป็น "รับบิลแล้ว" พร้อมบันทึกวันที่อัพเดทได้
+            
+            <div class="quick-search">
+                <p style="width:100%; text-align:center; margin-bottom:10px; color:#666;">ตัวอย่างข้อมูลทดสอบ:</p>
+                <button class="quick-search-btn" data-digits="99885">99885</button>
+                <button class="quick-search-btn" data-digits="12345">12345</button>
+                <button class="quick-search-btn" data-digits="67890">67890</button>
+                <button class="quick-search-btn" data-digits="54321">54321</button>
+                <button class="quick-search-btn" data-digits="98765">98765</button>
+                <button class="quick-search-btn" data-digits="11223">11223</button>
             </div>
-            <div class="test-data">
-                <h4><i class="fas fa-vial"></i> ข้อมูลตัวอย่างสำหรับทดสอบ:</h4>
-                <ul>
-                    <li><strong>99885</strong> - บิล INV-2024-99885, สถานที่: สำนักงานใหญ่</li>
-                    <li><strong>12345</strong> - บิล INV-2023-001-12345, สถานที่: สำนักงานใหญ่</li>
-                    <li><strong>67890</strong> - บิล INV-2023-002-67890, สถานที่: สาขาหลัก (รับบิลแล้ว)</li>
-                    <li><strong>54321</strong> - บิล INV-2023-003-54321, สถานที่: โกดังหลัก</li>
-                </ul>
+            
+            <div class="instructions">
+                <h3><i class="fas fa-info-circle"></i> วิธีการใช้งาน</h3>
+                <p>1. กรอกตัวเลข 5 ตัวท้ายของบิล (เช่น 12345) ในช่องค้นหา</p>
+                <p>2. กดปุ่ม "ค้นหาบิล" หรือปุ่ม Enter เพื่อค้นหา</p>
+                <p>3. ระบบจะแสดงรายละเอียดบิลและสถานะ</p>
+                <p>4. หากสถานะเป็น "รอรับบิล" สามารถกดยืนยันรับบิลได้</p>
             </div>
         </section>
         
         <section id="resultSection" class="result-section">
             <div class="result-header">
-                <h2 class="result-title">ผลการค้นหาบิล</h2>
-                <div id="billStatus" class="bill-status">สถานะบิล</div>
+                <h2 class="result-title">
+                    <i class="fas fa-file-alt"></i>
+                    ผลการค้นหาบิล
+                </h2>
+                <div id="billStatus" class="bill-status waiting">สถานะบิล</div>
             </div>
             
             <div id="billInfo" class="bill-details">
@@ -401,37 +520,76 @@
             <div id="updateSection" class="update-section">
                 <div class="checkbox-container">
                     <input type="checkbox" id="confirmCheckbox">
-                    <label for="confirmCheckbox" class="checkbox-label">ยืนยันการรับบิลแล้ว</label>
+                    <label for="confirmCheckbox" class="checkbox-label">
+                        <i class="fas fa-check-double"></i>
+                        ยืนยันการรับบิลแล้ว
+                    </label>
                 </div>
                 <button id="updateBtn" class="update-btn" disabled>
                     <i class="fas fa-check-circle"></i> อัพเดทสถานะเป็น "รับบิลแล้ว"
                 </button>
             </div>
             
-            <div id="message" class="message"></div>
+            <div class="admin-section">
+                <h3><i class="fas fa-cogs"></i> การตั้งค่าระบบ</h3>
+                <p>สำหรับการจัดการข้อมูลใน Google Sheets</p>
+                <div class="admin-buttons">
+                    <button id="setupDataBtn" class="admin-btn setup">
+                        <i class="fas fa-database"></i> ตั้งค่าข้อมูลตัวอย่าง
+                    </button>
+                    <button id="testApiBtn" class="admin-btn">
+                        <i class="fas fa-vial"></i> ทดสอบ API
+                    </button>
+                    <button id="openSheetBtn" class="admin-btn">
+                        <i class="fas fa-external-link-alt"></i> เปิด Google Sheet
+                    </button>
+                </div>
+            </div>
         </section>
         
         <div id="emptyState" class="empty-state">
             <i class="fas fa-file-invoice-dollar"></i>
             <h3>ยังไม่ได้ค้นหาข้อมูลบิล</h3>
             <p>กรุณากรอกตัวเลข 5 ตัวท้ายของบิลในช่องค้นหาเพื่อเริ่มต้น</p>
+            <p style="margin-top:20px; color:#999; font-size:0.9rem;">
+                <i class="fas fa-lightbulb"></i>
+                ลองใช้ปุ่มตัวอย่างข้อมูลทดสอบด้านบนเพื่อเริ่มต้นใช้งาน
+            </p>
         </div>
         
         <footer>
-            <p>ระบบเชื่อมต่อกับ Google Sheets | โทนสีม่วงขาว | สำหรับใช้บน GitHub</p>
-            <p>© 2024 ระบบจัดการบิลด้วย HTML</p>
+            <p>ระบบค้นหาและจัดการใบเสร็จรับเงิน  © 2024 | พัฒนาโดย Sarawut.C</p>
+            <p>สำหรับใช้ส่วนตัวเท่านั้น เพื่อง่ายต่อการทำงาน</p>
+            <p style="margin-top:10px; font-size:0.8rem; color:#aaa;">
+                Google Apps Script API: <span id="apiUrl"></span>
+            </p>
         </footer>
     </div>
     
-    <!-- iframe สำหรับการค้นหา -->
-    <iframe id="searchFrame" name="searchFrame" style="display: none;"></iframe>
-    
-    <!-- iframe สำหรับการอัพเดท -->
-    <iframe id="updateFrame" name="updateFrame" style="display: none;"></iframe>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        // ตั้งค่าคงที่ - Google Apps Script URL
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywIMMbXhkZE_3OhdGtjkRsU15fXFLHgO_4H1qfkMXr1s23ivC5b1PA9E1BOKQMm6AS/exec';
+        // ตั้งค่าคงที่
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxanULNaPJaiL9W5OEVYljWoyOdFQxElo7E9oHH--F-eC3H90DAfNOjEp7c0ChQOsM5/exec';
+        const SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1c2GRLsASc4MHySlIzjdaQWHydRjKBWxp88OblbN8Y5w/edit';
+        
+        // ตั้งค่า toastr
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
         
         // อ้างอิง DOM elements
         const lastDigitsInput = document.getElementById('lastDigits');
@@ -442,10 +600,188 @@
         const billInfo = document.getElementById('billInfo');
         const confirmCheckbox = document.getElementById('confirmCheckbox');
         const updateBtn = document.getElementById('updateBtn');
-        const message = document.getElementById('message');
+        const updateSection = document.getElementById('updateSection');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const systemInfo = document.getElementById('systemInfo');
+        const apiUrl = document.getElementById('apiUrl');
+        const setupDataBtn = document.getElementById('setupDataBtn');
+        const testApiBtn = document.getElementById('testApiBtn');
+        const openSheetBtn = document.getElementById('openSheetBtn');
         
-        // ฟังก์ชันแสดงข้อมูลบิล
+        // ตัวแปร global
+        let currentBillData = null;
+        let isConnected = false;
+        
+        // ตั้งค่าเมื่อโหลดหน้าเว็บ
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('ระบบค้นหาบิลพร้อมใช้งาน');
+            apiUrl.textContent = SCRIPT_URL;
+            apiUrl.title = SCRIPT_URL;
+            
+            // ตรวจสอบการเชื่อมต่อ
+            checkConnection();
+            
+            // ตั้งค่า event listeners
+            setupEventListeners();
+            
+            // ตั้งค่าปุ่มค้นหารวดเร็ว
+            setupQuickSearchButtons();
+        });
+        
+        // ตั้งค่า event listeners
+        function setupEventListeners() {
+            searchBtn.addEventListener('click', searchBill);
+            
+            lastDigitsInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    searchBill();
+                }
+            });
+            
+            lastDigitsInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^\d]/g, '').slice(0, 5);
+                this.value = this.value.toUpperCase();
+            });
+            
+            confirmCheckbox.addEventListener('change', function() {
+                updateBtn.disabled = !this.checked;
+            });
+            
+            updateBtn.addEventListener('click', updateBillStatus);
+            
+            setupDataBtn.addEventListener('click', setupSampleData);
+            testApiBtn.addEventListener('click', testAPI);
+            openSheetBtn.addEventListener('click', function() {
+                window.open(SPREADSHEET_URL, '_blank');
+            });
+        }
+        
+        // ตั้งค่าปุ่มค้นหารวดเร็ว
+        function setupQuickSearchButtons() {
+            document.querySelectorAll('.quick-search-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const digits = this.getAttribute('data-digits');
+                    lastDigitsInput.value = digits;
+                    searchBill();
+                });
+            });
+        }
+        
+        // ตรวจสอบการเชื่อมต่อ API
+        async function checkConnection() {
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=test&t=${Date.now()}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        isConnected = true;
+                        connectionStatus.className = 'connection-status connected';
+                        connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>เชื่อมต่อ API สำเร็จ</span>';
+                        systemInfo.textContent = `ระบบพร้อมใช้งาน | เวลา: ${data.timestamp}`;
+                        
+                        toastr.success('เชื่อมต่อ API สำเร็จ', 'ระบบพร้อมใช้งาน');
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } else {
+                    throw new Error('การเชื่อมต่อล้มเหลว');
+                }
+            } catch (error) {
+                console.warn('ไม่สามารถเชื่อมต่อกับ API:', error);
+                isConnected = false;
+                connectionStatus.className = 'connection-status disconnected';
+                connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>โหมดออฟไลน์ (ใช้ข้อมูลจำลอง)</span>';
+                systemInfo.textContent = 'ระบบทำงานในโหมดทดสอบ';
+                
+                toastr.warning('ใช้โหมดทดสอบกับข้อมูลจำลอง', 'การเชื่อมต่อมีปัญหา');
+            }
+        }
+        
+        // ตรวจสอบรูปแบบตัวเลข
+        function validateLastDigits(digits) {
+            const regex = /^\d{5}$/;
+            return regex.test(digits);
+        }
+        
+        // ค้นหาบิล
+        async function searchBill() {
+            const lastDigits = lastDigitsInput.value.trim();
+            
+            if (!lastDigits) {
+                toastr.error('กรุณากรอกตัวเลข 5 ตัวท้ายก่อนค้นหา', 'ข้อมูลไม่ครบถ้วน');
+                return;
+            }
+            
+            if (!validateLastDigits(lastDigits)) {
+                toastr.error('กรุณากรอกตัวเลข 5 หลักเท่านั้น (เช่น 12345)', 'รูปแบบไม่ถูกต้อง');
+                return;
+            }
+            
+            // แสดงสถานะกำลังโหลด
+            searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังค้นหา...';
+            searchBtn.disabled = true;
+            
+            try {
+                const response = await fetch(`${SCRIPT_URL}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'searchByLastDigits',
+                        lastDigits: lastDigits
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        if (result.billData) {
+                            displayBillData(result.billData);
+                            toastr.success(`พบข้อมูลบิลเลขท้าย ${lastDigits}`, 'ค้นหาสำเร็จ');
+                            
+                            if (result.source === 'sample_data') {
+                                toastr.info('กำลังใช้ข้อมูลตัวอย่าง', 'หมายเหตุ');
+                            }
+                        } else {
+                            toastr.warning(`ไม่พบข้อมูลบิลเลขท้าย ${lastDigits}`, 'ค้นหาไม่พบ');
+                            showEmptyState(`ไม่พบข้อมูลบิลเลขท้าย "${lastDigits}"`);
+                        }
+                    } else {
+                        toastr.error(result.message, 'เกิดข้อผิดพลาด');
+                    }
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            } catch (error) {
+                console.error('Error searching bill:', error);
+                toastr.error('เกิดข้อผิดพลาดในการค้นหา', 'ข้อผิดพลาดระบบ');
+                
+                // ใช้ข้อมูลจำลองหากเชื่อมต่อไม่ได้
+                if (!isConnected) {
+                    const mockData = getMockBillData(lastDigits);
+                    if (mockData) {
+                        displayBillData(mockData);
+                        toastr.info('กำลังใช้ข้อมูลจำลอง', 'โหมดทดสอบ');
+                    } else {
+                        showEmptyState(`ไม่พบข้อมูลบิลเลขท้าย "${lastDigits}" ในข้อมูลจำลอง`);
+                    }
+                }
+            } finally {
+                // รีเซ็ตปุ่มค้นหา
+                searchBtn.innerHTML = '<i class="fas fa-search"></i> ค้นหาบิล';
+                searchBtn.disabled = false;
+            }
+        }
+        
+        // แสดงข้อมูลบิล
         function displayBillData(billData) {
+            // เก็บข้อมูลบิลปัจจุบัน
+            currentBillData = billData;
+            
             // ซ่อน empty state และแสดงผลลัพธ์
             emptyState.style.display = 'none';
             resultSection.classList.add('active');
@@ -456,325 +792,345 @@
             
             if (status === 'รับบิลแล้ว') {
                 billStatus.className = 'bill-status received';
-                document.getElementById('updateSection').style.display = 'none';
+                updateSection.style.display = 'none';
             } else {
                 billStatus.className = 'bill-status waiting';
-                document.getElementById('updateSection').style.display = 'block';
+                updateSection.style.display = 'block';
             }
             
             // แสดงรายละเอียดบิล
             billInfo.innerHTML = `
                 <div class="detail-item">
-                    <div class="detail-label">เลขที่บิล (เต็ม)</div>
-                    <div class="detail-value">${billData.fullBillNumber || billData.billNumber || '-'}</div>
+                    <div class="detail-label">
+                        <i class="fas fa-hashtag"></i>
+                        เลขที่บิล (เต็ม)
+                    </div>
+                    <div class="detail-value">${billData.fullBillNumber || '-'}</div>
                 </div>
                 <div class="detail-item">
-                    <div class="detail-label">ตัวเลข 5 ตัวท้าย</div>
+                    <div class="detail-label">
+                        <i class="fas fa-sort-numeric-down"></i>
+                        ตัวเลข 5 ตัวท้าย
+                    </div>
                     <div class="detail-value">${billData.lastDigits || '-'}</div>
                 </div>
                 <div class="detail-item">
-                    <div class="detail-label">สถานที่</div>
+                    <div class="detail-label">
+                        <i class="fas fa-map-marker-alt"></i>
+                        สถานที่
+                    </div>
                     <div class="detail-value">${billData.location || '-'}</div>
                 </div>
                 <div class="detail-item">
-                    <div class="detail-label">รายละเอียด</div>
+                    <div class="detail-label">
+                        <i class="fas fa-clipboard-list"></i>
+                        รายละเอียด
+                    </div>
                     <div class="detail-value">${billData.details || '-'}</div>
                 </div>
                 <div class="detail-item">
-                    <div class="detail-label">สถานะ</div>
+                    <div class="detail-label">
+                        <i class="fas fa-tasks"></i>
+                        สถานะ
+                    </div>
                     <div class="detail-value">${billData.status || 'รอรับบิล'}</div>
                 </div>
                 <div class="detail-item">
-                    <div class="detail-label">วันที่อัพเดทล่าสุด</div>
-                    <div class="detail-value">${billData.updateDate || '-'}</div>
+                    <div class="detail-label">
+                        <i class="fas fa-calendar-alt"></i>
+                        วันที่อัพเดทล่าสุด
+                    </div>
+                    <div class="detail-value">${billData.updateDate || 'ยังไม่อัพเดท'}</div>
                 </div>
             `;
             
             // รีเซ็ต checkbox และปุ่มอัพเดท
             confirmCheckbox.checked = false;
             updateBtn.disabled = true;
-            message.className = 'message';
-            message.style.display = 'none';
         }
         
-        // ฟังก์ชันค้นหาบิลด้วย iframe
-        function searchBill() {
-            const lastDigits = lastDigitsInput.value.trim();
-            
-            if (!lastDigits) {
-                showMessage('กรุณากรอกตัวเลข 5 ตัวท้ายก่อนค้นหา', 'error');
+        // อัพเดทสถานะบิล
+        async function updateBillStatus() {
+            if (!currentBillData || !currentBillData.lastDigits) {
+                toastr.error('กรุณาค้นหาบิลก่อนที่จะอัพเดทสถานะ', 'ข้อมูลไม่ครบถ้วน');
                 return;
             }
             
-            // ตรวจสอบรูปแบบตัวเลข
-            if (!/^\d{5}$/.test(lastDigits)) {
-                showMessage('กรุณากรอกตัวเลข 5 หลักเท่านั้น (เช่น 12345)', 'error');
+            if (!confirmCheckbox.checked) {
+                toastr.warning('กรุณายืนยันการรับบิลก่อนอัพเดท', 'ยืนยันข้อมูล');
                 return;
             }
             
-            // แสดงสถานะกำลังโหลด
-            searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังค้นหา...';
-            searchBtn.disabled = true;
-            
-            // สร้าง form สำหรับส่งข้อมูล
-            const form = document.createElement('form');
-            form.method = 'GET';
-            form.action = SCRIPT_URL;
-            form.target = 'searchFrame';
-            form.style.display = 'none';
-            
-            // เพิ่ม parameter
-            const actionInput = document.createElement('input');
-            actionInput.type = 'hidden';
-            actionInput.name = 'action';
-            actionInput.value = 'searchByLastDigits';
-            form.appendChild(actionInput);
-            
-            const digitsInput = document.createElement('input');
-            digitsInput.type = 'hidden';
-            digitsInput.name = 'lastDigits';
-            digitsInput.value = lastDigits;
-            form.appendChild(digitsInput);
-            
-            // เพิ่ม timestamp เพื่อป้องกัน cache
-            const timestampInput = document.createElement('input');
-            timestampInput.type = 'hidden';
-            timestampInput.name = 't';
-            timestampInput.value = Date.now();
-            form.appendChild(timestampInput);
-            
-            document.body.appendChild(form);
-            
-            // ตั้งค่า callback สำหรับเมื่อ iframe โหลดเสร็จ
-            document.getElementById('searchFrame').onload = function() {
-                // ลบ form
-                document.body.removeChild(form);
-                
-                try {
-                    // ดึงข้อมูลจาก iframe
-                    const iframeDoc = this.contentDocument || this.contentWindow.document;
-                    const iframeContent = iframeDoc.body.innerText || iframeDoc.body.textContent;
-                    
-                    console.log('ได้รับ response จาก iframe:', iframeContent);
-                    
-                    if (iframeContent) {
-                        try {
-                            const data = JSON.parse(iframeContent);
-                            
-                            if (data.success) {
-                                if (data.billData) {
-                                    displayBillData(data.billData);
-                                    showMessage('พบข้อมูลบิลเรียบร้อยแล้ว', 'success');
-                                } else {
-                                    showMessage('ไม่พบข้อมูลบิลที่ค้นหา', 'error');
-                                    resultSection.classList.remove('active');
-                                    emptyState.style.display = 'block';
-                                    emptyState.innerHTML = `
-                                        <i class="fas fa-search"></i>
-                                        <h3>ไม่พบข้อมูลบิลเลขท้าย "${lastDigits}"</h3>
-                                        <p>กรุณาตรวจสอบตัวเลข 5 หลักและลองอีกครั้ง</p>
-                                    `;
-                                }
-                            } else {
-                                showMessage('เกิดข้อผิดพลาดในการค้นหา: ' + data.message, 'error');
-                            }
-                        } catch (e) {
-                            console.error('Error parsing response:', e);
-                            showMessage('เกิดข้อผิดพลาดในการอ่านข้อมูล', 'error');
-                        }
-                    }
-                } catch (e) {
-                    console.error('Error accessing iframe:', e);
-                    showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
-                } finally {
-                    // รีเซ็ตปุ่มค้นหา
-                    searchBtn.innerHTML = '<i class="fas fa-search"></i> ค้นหาบิล';
-                    searchBtn.disabled = false;
-                    
-                    // รีเซ็ต onload
-                    this.onload = null;
-                }
-            };
-            
-            // ส่ง form
-            form.submit();
-        }
-        
-        // ฟังก์ชันอัพเดทสถานะบิลด้วย iframe
-        function updateBillStatus() {
-            const lastDigits = lastDigitsInput.value.trim();
-            
-            if (!lastDigits) {
-                showMessage('ไม่พบเลขท้ายบิลสำหรับอัพเดท', 'error');
-                return;
-            }
+            const lastDigits = currentBillData.lastDigits;
             
             // แสดงสถานะกำลังโหลด
             updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังอัพเดท...';
             updateBtn.disabled = true;
             
-            // สร้าง form สำหรับส่งข้อมูล
-            const form = document.createElement('form');
-            form.method = 'GET';
-            form.action = SCRIPT_URL;
-            form.target = 'updateFrame';
-            form.style.display = 'none';
-            
-            // เพิ่ม parameter
-            const actionInput = document.createElement('input');
-            actionInput.type = 'hidden';
-            actionInput.name = 'action';
-            actionInput.value = 'updateByLastDigits';
-            form.appendChild(actionInput);
-            
-            const digitsInput = document.createElement('input');
-            digitsInput.type = 'hidden';
-            digitsInput.name = 'lastDigits';
-            digitsInput.value = lastDigits;
-            form.appendChild(digitsInput);
-            
-            const statusInput = document.createElement('input');
-            statusInput.type = 'hidden';
-            statusInput.name = 'status';
-            statusInput.value = 'รับบิลแล้ว';
-            form.appendChild(statusInput);
-            
-            // เพิ่ม timestamp
-            const timestampInput = document.createElement('input');
-            timestampInput.type = 'hidden';
-            timestampInput.name = 't';
-            timestampInput.value = Date.now();
-            form.appendChild(timestampInput);
-            
-            document.body.appendChild(form);
-            
-            // ตั้งค่า callback สำหรับเมื่อ iframe โหลดเสร็จ
-            document.getElementById('updateFrame').onload = function() {
-                // ลบ form
-                document.body.removeChild(form);
+            try {
+                const response = await fetch(`${SCRIPT_URL}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'updateByLastDigits',
+                        lastDigits: lastDigits,
+                        status: 'รับบิลแล้ว'
+                    })
+                });
                 
-                try {
-                    // ดึงข้อมูลจาก iframe
-                    const iframeDoc = this.contentDocument || this.contentWindow.document;
-                    const iframeContent = iframeDoc.body.innerText || iframeDoc.body.textContent;
+                if (response.ok) {
+                    const result = await response.json();
                     
-                    console.log('ได้รับ response อัพเดทจาก iframe:', iframeContent);
-                    
-                    if (iframeContent) {
-                        try {
-                            const data = JSON.parse(iframeContent);
-                            
-                            if (data.success) {
-                                showMessage('อัพเดทสถานะบิลเรียบร้อยแล้ว', 'success');
-                                
-                                // อัพเดท UI
-                                billStatus.textContent = 'รับบิลแล้ว';
-                                billStatus.className = 'bill-status received';
-                                
-                                // อัพเดทวันที่ในข้อมูลบิล
-                                const updateDate = data.updateDate || new Date().toLocaleDateString('th-TH', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                });
-                                
-                                // อัพเดทข้อมูลใน UI
-                                const detailItems = document.querySelectorAll('.detail-item');
-                                detailItems[4].querySelector('.detail-value').textContent = 'รับบิลแล้ว';
-                                detailItems[5].querySelector('.detail-value').textContent = updateDate;
-                                
-                                // ซ่อนส่วนอัพเดท
-                                document.getElementById('updateSection').style.display = 'none';
-                                
-                                // รีเฟรชข้อมูล
-                                setTimeout(() => {
-                                    searchBill();
-                                }, 1000);
-                                
-                            } else {
-                                showMessage('เกิดข้อผิดพลาดในการอัพเดท: ' + data.message, 'error');
-                            }
-                        } catch (e) {
-                            console.error('Error parsing response:', e);
-                            showMessage('เกิดข้อผิดพลาดในการอ่านข้อมูล', 'error');
+                    if (result.success) {
+                        // อัพเดทข้อมูลบิลปัจจุบัน
+                        currentBillData.status = 'รับบิลแล้ว';
+                        currentBillData.updateDate = result.updateDate;
+                        
+                        // อัพเดท UI
+                        billStatus.textContent = 'รับบิลแล้ว';
+                        billStatus.className = 'bill-status received';
+                        
+                        // อัพเดทรายละเอียด
+                        const detailItems = document.querySelectorAll('.detail-item');
+                        detailItems[4].querySelector('.detail-value').textContent = 'รับบิลแล้ว';
+                        detailItems[5].querySelector('.detail-value').textContent = result.updateDate;
+                        
+                        // ซ่อนส่วนอัพเดท
+                        updateSection.style.display = 'none';
+                        
+                        toastr.success(result.message, 'อัพเดทสำเร็จ');
+                        
+                        if (result.updatedRow) {
+                            console.log(`อัพเดทแถวที่ ${result.updatedRow} สำเร็จ`);
                         }
+                    } else {
+                        toastr.error(result.message, 'อัพเดทไม่สำเร็จ');
                     }
-                } catch (e) {
-                    console.error('Error accessing iframe:', e);
-                    showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
-                } finally {
-                    // รีเซ็ตปุ่มอัพเดท
-                    updateBtn.innerHTML = '<i class="fas fa-check-circle"></i> อัพเดทสถานะเป็น "รับบิลแล้ว"';
-                    updateBtn.disabled = true;
-                    confirmCheckbox.checked = false;
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            } catch (error) {
+                console.error('Error updating bill:', error);
+                toastr.error('เกิดข้อผิดพลาดในการอัพเดทสถานะ', 'ข้อผิดพลาดระบบ');
+                
+                // จำลองการอัพเดทหากเชื่อมต่อไม่ได้
+                if (!isConnected) {
+                    simulateUpdate();
+                }
+            } finally {
+                // รีเซ็ตปุ่มอัพเดท
+                updateBtn.innerHTML = '<i class="fas fa-check-circle"></i> อัพเดทสถานะเป็น "รับบิลแล้ว"';
+                updateBtn.disabled = true;
+                confirmCheckbox.checked = false;
+            }
+        }
+        
+        // จำลองการอัพเดท (สำหรับโหมดออฟไลน์)
+        function simulateUpdate() {
+            if (!currentBillData) return;
+            
+            // อัพเดทข้อมูลบิลปัจจุบัน
+            const now = new Date();
+            const updateDate = now.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            currentBillData.status = 'รับบิลแล้ว';
+            currentBillData.updateDate = updateDate;
+            
+            // อัพเดท UI
+            billStatus.textContent = 'รับบิลแล้ว';
+            billStatus.className = 'bill-status received';
+            
+            const detailItems = document.querySelectorAll('.detail-item');
+            detailItems[4].querySelector('.detail-value').textContent = 'รับบิลแล้ว';
+            detailItems[5].querySelector('.detail-value').textContent = updateDate;
+            
+            updateSection.style.display = 'none';
+            
+            toastr.info('อัพเดทสถานะในโหมดทดสอบ', 'ข้อมูลจำลอง');
+        }
+        
+        // แสดงสถานะเมื่อไม่พบข้อมูล
+        function showEmptyState(message) {
+            resultSection.classList.remove('active');
+            emptyState.style.display = 'block';
+            emptyState.innerHTML = `
+                <i class="fas fa-search"></i>
+                <h3>${message}</h3>
+                <p>กรุณาตรวจสอบตัวเลข 5 หลักและลองอีกครั้ง</p>
+                <div style="margin-top:20px;">
+                    <p>ลองใช้ตัวเลขเหล่านี้:</p>
+                    <div style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
+                        <button class="quick-search-btn" data-digits="99885">99885</button>
+                        <button class="quick-search-btn" data-digits="12345">12345</button>
+                        <button class="quick-search-btn" data-digits="67890">67890</button>
+                    </div>
+                </div>
+            `;
+            
+            // เพิ่ม event listener ใหม่ให้ปุ่ม
+            setTimeout(() => {
+                document.querySelectorAll('#emptyState .quick-search-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const digits = this.getAttribute('data-digits');
+                        lastDigitsInput.value = digits;
+                        searchBill();
+                    });
+                });
+            }, 100);
+        }
+        
+        // ตั้งค่าข้อมูลตัวอย่าง
+        async function setupSampleData() {
+            if (!confirm('คุณแน่ใจหรือไม่ที่จะตั้งค่าข้อมูลตัวอย่าง? ข้อมูลเดิมจะถูกลบทั้งหมด!')) {
+                return;
+            }
+            
+            setupDataBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังตั้งค่า...';
+            setupDataBtn.disabled = true;
+            
+            try {
+                const response = await fetch(`${SCRIPT_URL}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'setupSampleData'
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
                     
-                    // รีเซ็ต onload
-                    this.onload = null;
+                    if (result.success) {
+                        toastr.success(result.message, 'ตั้งค่าสำเร็จ');
+                        if (result.sheetUrl) {
+                            setTimeout(() => {
+                                if (confirm('ต้องการเปิด Google Sheet เพื่อดูข้อมูลหรือไม่?')) {
+                                    window.open(result.sheetUrl, '_blank');
+                                }
+                            }, 1500);
+                        }
+                    } else {
+                        toastr.error(result.message, 'ตั้งค่าไม่สำเร็จ');
+                    }
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            } catch (error) {
+                console.error('Error setting up sample data:', error);
+                toastr.error('เกิดข้อผิดพลาดในการตั้งค่าข้อมูล', 'ข้อผิดพลาดระบบ');
+            } finally {
+                setupDataBtn.innerHTML = '<i class="fas fa-database"></i> ตั้งค่าข้อมูลตัวอย่าง';
+                setupDataBtn.disabled = false;
+            }
+        }
+        
+        // ทดสอบ API
+        async function testAPI() {
+            testApiBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังทดสอบ...';
+            
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=test&t=${Date.now()}`);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    let message = `API ทำงานปกติ\n`;
+                    message += `เวลา: ${result.timestamp}\n`;
+                    message += `ชีท: ${result.sheetInfo}\n`;
+                    message += `จำนวนแถว: ${result.rowCount}`;
+                    
+                    alert(message);
+                    
+                    // อัพเดทสถานะการเชื่อมต่อ
+                    if (result.success) {
+                        isConnected = true;
+                        connectionStatus.className = 'connection-status connected';
+                        connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>เชื่อมต่อ API สำเร็จ</span>';
+                    }
+                } else {
+                    throw new Error('การเชื่อมต่อล้มเหลว');
+                }
+            } catch (error) {
+                alert(`ข้อผิดพลาด: ${error.message}\n\nกำลังใช้โหมดทดสอบกับข้อมูลจำลอง`);
+                isConnected = false;
+                connectionStatus.className = 'connection-status disconnected';
+                connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>โหมดออฟไลน์ (ใช้ข้อมูลจำลอง)</span>';
+            } finally {
+                testApiBtn.innerHTML = '<i class="fas fa-vial"></i> ทดสอบ API';
+            }
+        }
+        
+        // ข้อมูลจำลอง
+        function getMockBillData(lastDigits) {
+            const mockBills = {
+                '99885': {
+                    fullBillNumber: 'INV-2024-99885',
+                    lastDigits: '99885',
+                    location: 'สำนักงานใหญ่',
+                    details: 'ค่าบริการ IT เดือนมกราคม',
+                    status: 'รอรับบิล',
+                    updateDate: ''
+                },
+                '12345': {
+                    fullBillNumber: 'INV-2023-001-12345',
+                    lastDigits: '12345',
+                    location: 'สำนักงานใหญ่',
+                    details: 'ค่าอุปกรณ์สำนักงาน',
+                    status: 'รอรับบิล',
+                    updateDate: ''
+                },
+                '67890': {
+                    fullBillNumber: 'INV-2023-002-67890',
+                    lastDigits: '67890',
+                    location: 'สาขาหลัก',
+                    details: 'ค่าจัดส่งหนังสือ',
+                    status: 'รับบิลแล้ว',
+                    updateDate: '15/01/2024 14:30:00'
+                },
+                '54321': {
+                    fullBillNumber: 'INV-2023-003-54321',
+                    lastDigits: '54321',
+                    location: 'โกดังหลัก',
+                    details: 'ค่าน้ำมันรถขนส่ง',
+                    status: 'รอรับบิล',
+                    updateDate: ''
+                },
+                '98765': {
+                    fullBillNumber: 'BILL-2023-98765',
+                    lastDigits: '98765',
+                    location: 'โครงการใหม่',
+                    details: 'ค่าก่อสร้างและปรับปรุงอาคาร',
+                    status: 'รอรับบิล',
+                    updateDate: ''
+                },
+                '11223': {
+                    fullBillNumber: 'BILL-2023-11223',
+                    lastDigits: '11223',
+                    location: 'สำนักงานสาขา',
+                    details: 'ค่าเช่าอาคารและสาธารณูปโภค',
+                    status: 'รับบิลแล้ว',
+                    updateDate: '20/01/2024 10:15:00'
                 }
             };
             
-            // ส่ง form
-            form.submit();
+            return mockBills[lastDigits] || null;
         }
         
-        // ฟังก์ชันแสดงข้อความ
-        function showMessage(text, type) {
-            message.textContent = text;
-            message.className = `message ${type}`;
-            message.style.display = 'block';
-            
-            // ซ่อนข้อความหลังจาก 5 วินาที
-            setTimeout(() => {
-                message.style.display = 'none';
-            }, 5000);
-        }
-        
-        // Event Listeners
-        searchBtn.addEventListener('click', searchBill);
-        
-        lastDigitsInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                searchBill();
-            }
-        });
-        
-        // จำกัดการป้อนข้อมูลเป็นตัวเลขเท่านั้น
-        lastDigitsInput.addEventListener('input', function() {
-            this.value = this.value.replace(/[^\d]/g, '').slice(0, 5);
-        });
-        
-        confirmCheckbox.addEventListener('change', function() {
-            updateBtn.disabled = !this.checked;
-        });
-        
-        updateBtn.addEventListener('click', updateBillStatus);
-        
-        // เริ่มต้นระบบ
-        function initSystem() {
-            console.log('ระบบค้นหาบิลพร้อมใช้งาน');
-            console.log('Google Apps Script URL:', SCRIPT_URL);
-            showMessage('ระบบพร้อมใช้งาน กรุณากรอกตัวเลข 5 หลักเพื่อค้นหาบิล', 'info');
-            
-            // ทดสอบการเชื่อมต่อ
-            testConnection();
-        }
-        
-        // ทดสอบการเชื่อมต่อ
-        async function testConnection() {
-            try {
-                const response = await fetch(`${SCRIPT_URL}?action=test&t=${Date.now()}`);
-                if (response.ok) {
-                    console.log('เชื่อมต่อกับ Google Apps Script สำเร็จ');
-                }
-            } catch (error) {
-                console.log('เชื่อมต่อกับ Google Apps Script ด้วย iframe');
-            }
-        }
-        
-        // เรียกใช้เมื่อโหลดหน้าเว็บเสร็จ
-        window.addEventListener('DOMContentLoaded', initSystem);
+        // แสดงตัวอย่างข้อมูลทดสอบใน console
+        console.log('ระบบค้นหาบิลพร้อมใช้งาน!');
+        console.log('URL API:', SCRIPT_URL);
+        console.log('URL Google Sheet:', SPREADSHEET_URL);
+        console.log('ตัวอย่างข้อมูลทดสอบ: 99885, 12345, 67890, 54321, 98765, 11223');
     </script>
 </body>
 </html>
