@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบค้นหาบิล - โทนสีม่วง</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f9f0ff 0%, #f2e9ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(106, 13, 173, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #8a2be2, #9370db, #8a2be2);
+        }
+        
+        h1 {
+            color: #6a0dad;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #9370db;
+            font-size: 1.1rem;
+        }
+        
+        .search-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(106, 13, 173, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e6d6ff;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: #8a2be2;
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+        }
+        
+        .search-btn {
+            background: linear-gradient(135deg, #8a2be2, #9370db);
+            color: white;
+            border: none;
+            padding: 0 35px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-btn:hover {
+            background: linear-gradient(135deg, #7a1bc2, #8360cb);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+        }
+        
+        .search-btn:active {
+            transform: translateY(0);
+        }
+        
+        .instructions {
+            background-color: #f8f4ff;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 5px solid #9370db;
+            font-size: 0.95rem;
+            color: #555;
+        }
+        
+        .result-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(106, 13, 173, 0.1);
+            margin-bottom: 30px;
+            display: none;
+        }
+        
+        .result-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0e6ff;
+        }
+        
+        .result-title {
+            color: #6a0dad;
+            font-size: 1.8rem;
+        }
+        
+        .bill-status {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            background-color: #e6f7e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+        
+        .bill-status.received {
+            background-color: #e6f7e9;
+            color: #2e7d32;
+            border-color: #c8e6c9;
+        }
+        
+        .bill-status.waiting {
+            background-color: #fff8e1;
+            color: #f57c00;
+            border-color: #ffe0b2;
+        }
+        
+        .bill-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .detail-item {
+            background-color: #f9f5ff;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .detail-label {
+            font-size: 0.9rem;
+            color: #9370db;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .detail-value {
+            font-size: 1.1rem;
+            color: #333;
+            word-break: break-word;
+        }
+        
+        .update-section {
+            background-color: #f9f5ff;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            accent-color: #8a2be2;
+        }
+        
+        .checkbox-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #6a0dad;
+        }
+        
+        .update-btn {
+            background: linear-gradient(135deg, #8a2be2, #9370db);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .update-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #7a1bc2, #8360cb);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+        }
+        
+        .update-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .message.success {
+            background-color: #e6f7e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+            display: block;
+        }
+        
+        .message.error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+            display: block;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #e6d6ff;
+            margin-bottom: 20px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #9370db;
+            font-size: 0.9rem;
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-btn {
+                padding: 15px;
+                justify-content: center;
+            }
+            
+            .bill-details {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-file-invoice"></i> ระบบค้นหาบิล</h1>
+            <p class="subtitle">ค้นหาบิลด้วยตัวเลข 5 ตัวท้ายในคอลัมน์ A</p>
+        </header>
+        
+        <section class="search-section">
+            <div class="search-box">
+                <input type="text" id="lastDigits" class="search-input" placeholder="กรอกตัวเลข 5 ตัวท้ายของบิล (เช่น 12345, 67890, ...)" autocomplete="off">
+                <button id="searchBtn" class="search-btn">
+                    <i class="fas fa-search"></i> ค้นหาบิล
+                </button>
+            </div>
+            <div class="instructions">
+                <i class="fas fa-info-circle"></i> ระบบจะค้นหาบิลจากตัวเลข 5 ตัวท้ายในคอลัมน์ A ของ Google Sheets หากพบข้อมูลจะแสดงรายละเอียดบิล และสามารถอัพเดทสถานะเป็น "รับบิลแล้ว" พร้อมบันทึกวันที่อัพเดทได้
+            </div>
+        </section>
+        
+        <section id="resultSection" class="result-section">
+            <div class="result-header">
+                <h2 class="result-title">ผลการค้นหาบิล</h2>
+                <div id="billStatus" class="bill-status">สถานะบิล</div>
+            </div>
+            
+            <div id="billInfo" class="bill-details">
+                <!-- ข้อมูลบิลจะแสดงที่นี่ -->
+            </div>
+            
+            <div id="updateSection" class="update-section">
+                <div class="checkbox-container">
+                    <input type="checkbox" id="confirmCheckbox">
+                    <label for="confirmCheckbox" class="checkbox-label">ยืนยันการรับบิลแล้ว</label>
+                </div>
+                <button id="updateBtn" class="update-btn" disabled>
+                    <i class="fas fa-check-circle"></i> อัพเดทสถานะเป็น "รับบิลแล้ว"
+                </button>
+            </div>
+            
+            <div id="message" class="message"></div>
+        </section>
+        
+        <div id="emptyState" class="empty-state">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <h3>ยังไม่ได้ค้นหาข้อมูลบิล</h3>
+            <p>กรุณากรอกตัวเลข 5 ตัวท้ายของบิลในช่องค้นหาเพื่อเริ่มต้น</p>
+        </div>
+        
+        <footer>
+            <p>ระบบเชื่อมต่อกับ Google Sheets | โทนสีม่วงขาว | สำหรับใช้บน GitHub</p>
+            <p>© 2023 ระบบจัดการบิลด้วย HTML</p>
+        </footer>
+    </div>
+    
+    <script>
+        // ตั้งค่าคงที่ - Google Apps Script URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxESn5MldSojk2mrQung2aSccfmOpaIkC7wwAqwb-lX-6Rx_5xVNP_ME2LhLEqErXK/exec';
+        
+        // อ้างอิง DOM elements
+        const lastDigitsInput = document.getElementById('lastDigits');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultSection = document.getElementById('resultSection');
+        const emptyState = document.getElementById('emptyState');
+        const billStatus = document.getElementById('billStatus');
+        const billInfo = document.getElementById('billInfo');
+        const confirmCheckbox = document.getElementById('confirmCheckbox');
+        const updateBtn = document.getElementById('updateBtn');
+        const message = document.getElementById('message');
+        
+        // ฟังก์ชันตรวจสอบตัวเลข 5 ตัว
+        function validateLastDigits(digits) {
+            const regex = /^\d{5}$/;
+            return regex.test(digits);
+        }
+        
+        // ฟังก์ชันแสดงข้อมูลบิล
+        function displayBillData(billData) {
+            // ซ่อน empty state และแสดงผลลัพธ์
+            emptyState.style.display = 'none';
+            resultSection.classList.add('active');
+            
+            // แสดงสถานะบิล
+            const status = billData.status || 'รอรับบิล';
+            billStatus.textContent = status;
+            
+            if (status === 'รับบิลแล้ว') {
+                billStatus.className = 'bill-status received';
+                document.getElementById('updateSection').style.display = 'none';
+            } else {
+                billStatus.className = 'bill-status waiting';
+                document.getElementById('updateSection').style.display = 'block';
+            }
+            
+            // แสดงรายละเอียดบิล
+            billInfo.innerHTML = `
+                <div class="detail-item">
+                    <div class="detail-label">เลขที่บิล (เต็ม)</div>
+                    <div class="detail-value">${billData.fullBillNumber || '-'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">ตัวเลข 5 ตัวท้าย</div>
+                    <div class="detail-value">${billData.lastDigits || '-'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">สถานที่</div>
+                    <div class="detail-value">${billData.location || '-'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">รายละเอียด</div>
+                    <div class="detail-value">${billData.details || '-'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">สถานะ</div>
+                    <div class="detail-value">${billData.status || 'รอรับบิล'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">วันที่อัพเดทล่าสุด</div>
+                    <div class="detail-value">${billData.updateDate || '-'}</div>
+                </div>
+            `;
+            
+            // รีเซ็ต checkbox และปุ่มอัพเดท
+            confirmCheckbox.checked = false;
+            updateBtn.disabled = true;
+            message.className = 'message';
+            message.style.display = 'none';
+        }
+        
+        // ฟังก์ชันค้นหาบิล
+        async function searchBill() {
+            const lastDigits = lastDigitsInput.value.trim();
+            
+            if (!lastDigits) {
+                showMessage('กรุณากรอกตัวเลข 5 ตัวท้ายก่อนค้นหา', 'error');
+                return;
+            }
+            
+            // ตรวจสอบรูปแบบตัวเลข
+            if (!validateLastDigits(lastDigits)) {
+                showMessage('กรุณากรอกตัวเลข 5 หลักเท่านั้น (เช่น 12345)', 'error');
+                return;
+            }
+            
+            // แสดงสถานะกำลังโหลด
+            searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังค้นหา...';
+            searchBtn.disabled = true;
+            
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=searchByLastDigits&lastDigits=${encodeURIComponent(lastDigits)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.billData) {
+                        displayBillData(data.billData);
+                        showMessage('พบข้อมูลบิลเรียบร้อยแล้ว', 'success');
+                    } else {
+                        showMessage('ไม่พบข้อมูลบิลที่ค้นหา', 'error');
+                        resultSection.classList.remove('active');
+                        emptyState.style.display = 'block';
+                        emptyState.innerHTML = `
+                            <i class="fas fa-search"></i>
+                            <h3>ไม่พบข้อมูลบิลเลขท้าย "${lastDigits}"</h3>
+                            <p>กรุณาตรวจสอบตัวเลข 5 หลักและลองอีกครั้ง</p>
+                        `;
+                    }
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการค้นหา: ' + data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error searching bill:', error);
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์', 'error');
+            } finally {
+                // รีเซ็ตปุ่มค้นหา
+                searchBtn.innerHTML = '<i class="fas fa-search"></i> ค้นหาบิล';
+                searchBtn.disabled = false;
+            }
+        }
+        
+        // ฟังก์ชันอัพเดทสถานะบิล
+        async function updateBillStatus() {
+            const lastDigits = lastDigitsInput.value.trim();
+            
+            if (!lastDigits) {
+                showMessage('ไม่พบเลขท้ายบิลสำหรับอัพเดท', 'error');
+                return;
+            }
+            
+            // แสดงสถานะกำลังโหลด
+            updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังอัพเดท...';
+            updateBtn.disabled = true;
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'updateByLastDigits',
+                        lastDigits: lastDigits,
+                        status: 'รับบิลแล้ว'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('อัพเดทสถานะบิลเรียบร้อยแล้ว', 'success');
+                    
+                    // อัพเดท UI ให้สะท้อนการเปลี่ยนแปลง
+                    billStatus.textContent = 'รับบิลแล้ว';
+                    billStatus.className = 'bill-status received';
+                    
+                    // อัพเดทวันที่ในข้อมูลบิล
+                    const updateDate = new Date().toLocaleDateString('th-TH', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    // อัพเดทข้อมูลใน UI
+                    const detailItems = document.querySelectorAll('.detail-item');
+                    detailItems[4].querySelector('.detail-value').textContent = 'รับบิลแล้ว';
+                    detailItems[5].querySelector('.detail-value').textContent = updateDate;
+                    
+                    // ซ่อนส่วนอัพเดท
+                    document.getElementById('updateSection').style.display = 'none';
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการอัพเดท: ' + data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error updating bill:', error);
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์', 'error');
+            } finally {
+                // รีเซ็ตปุ่มอัพเดท
+                updateBtn.innerHTML = '<i class="fas fa-check-circle"></i> อัพเดทสถานะเป็น "รับบิลแล้ว"';
+                updateBtn.disabled = true;
+                confirmCheckbox.checked = false;
+            }
+        }
+        
+        // ฟังก์ชันแสดงข้อความ
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = `message ${type}`;
+            message.style.display = 'block';
+            
+            // ซ่อนข้อความหลังจาก 5 วินาที (ยกเว้นข้อความ error)
+            if (type !== 'error') {
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Event Listeners
+        searchBtn.addEventListener('click', searchBill);
+        
+        lastDigitsInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                searchBill();
+            }
+        });
+        
+        // จำกัดการป้อนข้อมูลเป็นตัวเลขเท่านั้น
+        lastDigitsInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^\d]/g, '').slice(0, 5);
+        });
+        
+        confirmCheckbox.addEventListener('change', function() {
+            updateBtn.disabled = !this.checked;
+        });
+        
+        updateBtn.addEventListener('click', updateBillStatus);
+        
+        // ตัวอย่างข้อมูลสำหรับทดสอบ (ถ้าต้องการทดสอบโดยไม่เชื่อมต่อกับ Google Apps Script)
+        function setupTestMode() {
+            console.log('ระบบค้นหาบิลด้วยตัวเลข 5 ตัวท้ายพร้อมใช้งาน');
+            console.log('URL ของ Google Apps Script:', SCRIPT_URL);
+            console.log('ระบบจะค้นหาจากตัวเลข 5 ตัวท้ายในคอลัมน์ A ของ Google Sheets');
+            
+            // เพิ่มตัวอย่างข้อมูลในช่องค้นหาเพื่อให้ทดสอบง่าย
+            lastDigitsInput.placeholder = "กรอกตัวเลข 5 ตัวท้าย (เช่น 12345, 67890, ...)";
+        }
+        
+        // เรียกใช้เมื่อโหลดหน้าเว็บเสร็จ
+        window.addEventListener('DOMContentLoaded', setupTestMode);
+    </script>
+</body>
+</html>
