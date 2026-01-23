@@ -6,7 +6,7 @@
     <title>ระบบค้นหาบิล - โทนสีม่วง</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
+       * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -118,38 +118,16 @@
             border-left: 5px solid #9370db;
             font-size: 0.95rem;
             color: #555;
-            margin-bottom: 15px;
         }
         
-        .test-data {
-            background-color: #f0f7ff;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px dashed #9370db;
+        .test-mode-notice {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            padding: 12px 15px;
+            border-radius: 10px;
             margin-top: 15px;
-        }
-        
-        .test-data h4 {
-            color: #6a0dad;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .test-data ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        
-        .test-data li {
-            padding: 8px 0;
-            color: #555;
-            border-bottom: 1px dashed #e0e0e0;
-        }
-        
-        .test-data li:last-child {
-            border-bottom: none;
+            font-size: 0.9rem;
+            border-left: 4px solid #2196f3;
         }
         
         .result-section {
@@ -190,18 +168,21 @@
             padding: 8px 20px;
             border-radius: 50px;
             font-weight: 600;
-        }
-        
-        .bill-status.received {
             background-color: #e6f7e9;
             color: #2e7d32;
             border: 1px solid #c8e6c9;
         }
         
+        .bill-status.received {
+            background-color: #e6f7e9;
+            color: #2e7d32;
+            border-color: #c8e6c9;
+        }
+        
         .bill-status.waiting {
             background-color: #fff8e1;
             color: #f57c00;
-            border: 1px solid #ffe0b2;
+            border-color: #ffe0b2;
         }
         
         .bill-details {
@@ -334,6 +315,29 @@
             padding: 20px;
         }
         
+        .test-data {
+            margin-top: 20px;
+            background-color: #f0f7ff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px dashed #9370db;
+        }
+        
+        .test-data h4 {
+            color: #6a0dad;
+            margin-bottom: 10px;
+        }
+        
+        .test-data ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .test-data li {
+            padding: 5px 0;
+            color: #555;
+        }
+        
         @media (max-width: 768px) {
             .search-box {
                 flex-direction: column;
@@ -351,18 +355,12 @@
             h1 {
                 font-size: 2rem;
             }
-            
-            .result-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
+      <header>
             <h1><i class="fas fa-file-invoice"></i> ระบบค้นหาบิล</h1>
             <p class="subtitle">ค้นหาบิลด้วยตัวเลข 5 ตัวท้ายในคอลัมน์ A</p>
         </header>
@@ -377,14 +375,17 @@
             <div class="instructions">
                 <i class="fas fa-info-circle"></i> ระบบจะค้นหาบิลจากตัวเลข 5 ตัวท้ายในคอลัมน์ A ของ Google Sheets หากพบข้อมูลจะแสดงรายละเอียดบิล และสามารถอัพเดทสถานะเป็น "รับบิลแล้ว" พร้อมบันทึกวันที่อัพเดทได้
             </div>
+            <div class="test-mode-notice">
+                <i class="fas fa-exclamation-circle"></i> กำลังใช้โหมดทดสอบ: ระบบกำลังใช้ข้อมูลจำลองเนื่องจาก Google Apps Script ยังไม่รองรับการค้นหาตามตัวเลข 5 ตัวท้าย
+            </div>
             <div class="test-data">
-                <h4><i class="fas fa-vial"></i> ข้อมูลตัวอย่างสำหรับทดสอบ:</h4>
+                <h4><i class="fas fa-vial"></i> ข้อมูลทดสอบสำหรับค้นหา:</h4>
                 <ul>
-                    <li><strong>12345</strong> - บิล INV-2023-001-12345, สถานที่: สำนักงานใหญ่</li>
-                    <li><strong>67890</strong> - บิล INV-2023-002-67890, สถานที่: สาขาหลัก (รับบิลแล้ว)</li>
-                    <li><strong>54321</strong> - บิล INV-2023-003-54321, สถานที่: โกดังหลัก</li>
-                    <li><strong>98765</strong> - บิล BILL-2023-98765, สถานที่: โครงการใหม่</li>
-                    <li><strong>11223</strong> - บิล BILL-2023-11223, สถานที่: สำนักงานสาขา (รับบิลแล้ว)</li>
+                    <li><strong>12345</strong> - บิล A001, สถานที่: สำนักงานใหญ่</li>
+                    <li><strong>67890</strong> - บิล B002, สถานที่: สาขาหลัก</li>
+                    <li><strong>54321</strong> - บิล C003, สถานที่: ศูนย์กระจายสินค้า</li>
+                    <li><strong>98765</strong> - บิล D004, สถานที่: โครงการใหม่</li>
+                    <li><strong>11223</strong> - บิล E005, สถานที่: สำนักงานสาขา</li>
                 </ul>
             </div>
         </section>
@@ -424,26 +425,233 @@
         </footer>
     </div>
     
+    <!-- iframe สำหรับการค้นหา -->
+    <iframe id="searchFrame" name="searchFrame" style="display: none;"></iframe>
+    
+    <!-- iframe สำหรับการอัพเดท -->
+    <iframe id="updateFrame" name="updateFrame" style="display: none;"></iframe>
+    
     <script>
         // ตั้งค่าคงที่ - Google Apps Script URL
-        // ต้องเปลี่ยน URL นี้เป็น URL ของ Apps Script ที่เผยแพร่แล้ว
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxanULNaPJaiL9W5OEVYljWoyOdFQxElo7E9oHH--F-eC3H90DAfNOjEp7c0ChQOsM5/exec';
         
-        // อ้างอิง DOM elements
-        const lastDigitsInput = document.getElementById('lastDigits');
-        const searchBtn = document.getElementById('searchBtn');
-        const resultSection = document.getElementById('resultSection');
-        const emptyState = document.getElementById('emptyState');
-        const billStatus = document.getElementById('billStatus');
-        const billInfo = document.getElementById('billInfo');
-        const confirmCheckbox = document.getElementById('confirmCheckbox');
-        const updateBtn = document.getElementById('updateBtn');
-        const message = document.getElementById('message');
+        // ข้อมูลชั่วคราวสำหรับเก็บผลลัพธ์
+        let searchResult = null;
         
-        // ฟังก์ชันตรวจสอบตัวเลข 5 ตัว
-        function validateLastDigits(digits) {
-            const regex = /^\d{5}$/;
-            return regex.test(digits);
+        // ฟังก์ชันค้นหาบิลด้วย iframe
+        function searchBill() {
+            const lastDigits = lastDigitsInput.value.trim();
+            
+            if (!lastDigits) {
+                showMessage('กรุณากรอกตัวเลข 5 ตัวท้ายก่อนค้นหา', 'error');
+                return;
+            }
+            
+            // ตรวจสอบรูปแบบตัวเลข
+            if (!/^\d{5}$/.test(lastDigits)) {
+                showMessage('กรุณากรอกตัวเลข 5 หลักเท่านั้น (เช่น 12345)', 'error');
+                return;
+            }
+            
+            // แสดงสถานะกำลังโหลด
+            searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังค้นหา...';
+            searchBtn.disabled = true;
+            
+            // สร้าง form สำหรับส่งข้อมูล
+            const form = document.createElement('form');
+            form.method = 'GET';
+            form.action = SCRIPT_URL;
+            form.target = 'searchFrame';
+            form.style.display = 'none';
+            
+            // เพิ่ม parameter
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'searchByLastDigits';
+            form.appendChild(actionInput);
+            
+            const digitsInput = document.createElement('input');
+            digitsInput.type = 'hidden';
+            digitsInput.name = 'lastDigits';
+            digitsInput.value = lastDigits;
+            form.appendChild(digitsInput);
+            
+            // เพิ่ม timestamp เพื่อป้องกัน cache
+            const timestampInput = document.createElement('input');
+            timestampInput.type = 'hidden';
+            timestampInput.name = 't';
+            timestampInput.value = Date.now();
+            form.appendChild(timestampInput);
+            
+            document.body.appendChild(form);
+            
+            // ตั้งค่า callback สำหรับเมื่อ iframe โหลดเสร็จ
+            document.getElementById('searchFrame').onload = function() {
+                // ลบ form
+                document.body.removeChild(form);
+                
+                try {
+                    // ดึงข้อมูลจาก iframe
+                    const iframeDoc = this.contentDocument || this.contentWindow.document;
+                    const iframeContent = iframeDoc.body.innerText || iframeDoc.body.textContent;
+                    
+                    console.log('ได้รับ response จาก iframe:', iframeContent);
+                    
+                    if (iframeContent) {
+                        try {
+                            const data = JSON.parse(iframeContent);
+                            
+                            if (data.success) {
+                                if (data.billData) {
+                                    displayBillData(data.billData);
+                                    showMessage('พบข้อมูลบิลเรียบร้อยแล้ว', 'success');
+                                } else {
+                                    showMessage('ไม่พบข้อมูลบิลที่ค้นหา', 'error');
+                                    resultSection.classList.remove('active');
+                                    emptyState.style.display = 'block';
+                                    emptyState.innerHTML = `
+                                        <i class="fas fa-search"></i>
+                                        <h3>ไม่พบข้อมูลบิลเลขท้าย "${lastDigits}"</h3>
+                                        <p>กรุณาตรวจสอบตัวเลข 5 หลักและลองอีกครั้ง</p>
+                                    `;
+                                }
+                            } else {
+                                showMessage('เกิดข้อผิดพลาดในการค้นหา: ' + data.message, 'error');
+                            }
+                        } catch (e) {
+                            console.error('Error parsing response:', e);
+                            showMessage('เกิดข้อผิดพลาดในการอ่านข้อมูล', 'error');
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error accessing iframe:', e);
+                    showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+                } finally {
+                    // รีเซ็ตปุ่มค้นหา
+                    searchBtn.innerHTML = '<i class="fas fa-search"></i> ค้นหาบิล';
+                    searchBtn.disabled = false;
+                    
+                    // รีเซ็ต onload
+                    this.onload = null;
+                }
+            };
+            
+            // ส่ง form
+            form.submit();
+        }
+        
+        // ฟังก์ชันอัพเดทสถานะบิลด้วย iframe
+        function updateBillStatus() {
+            const lastDigits = lastDigitsInput.value.trim();
+            
+            if (!lastDigits) {
+                showMessage('ไม่พบเลขท้ายบิลสำหรับอัพเดท', 'error');
+                return;
+            }
+            
+            // แสดงสถานะกำลังโหลด
+            updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังอัพเดท...';
+            updateBtn.disabled = true;
+            
+            // สร้าง form สำหรับส่งข้อมูล
+            const form = document.createElement('form');
+            form.method = 'GET';
+            form.action = SCRIPT_URL;
+            form.target = 'updateFrame';
+            form.style.display = 'none';
+            
+            // เพิ่ม parameter
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'updateByLastDigits';
+            form.appendChild(actionInput);
+            
+            const digitsInput = document.createElement('input');
+            digitsInput.type = 'hidden';
+            digitsInput.name = 'lastDigits';
+            digitsInput.value = lastDigits;
+            form.appendChild(digitsInput);
+            
+            const statusInput = document.createElement('input');
+            statusInput.type = 'hidden';
+            statusInput.name = 'status';
+            statusInput.value = 'รับบิลแล้ว';
+            form.appendChild(statusInput);
+            
+            // เพิ่ม timestamp
+            const timestampInput = document.createElement('input');
+            timestampInput.type = 'hidden';
+            timestampInput.name = 't';
+            timestampInput.value = Date.now();
+            form.appendChild(timestampInput);
+            
+            document.body.appendChild(form);
+            
+            // ตั้งค่า callback สำหรับเมื่อ iframe โหลดเสร็จ
+            document.getElementById('updateFrame').onload = function() {
+                // ลบ form
+                document.body.removeChild(form);
+                
+                try {
+                    // ดึงข้อมูลจาก iframe
+                    const iframeDoc = this.contentDocument || this.contentWindow.document;
+                    const iframeContent = iframeDoc.body.innerText || iframeDoc.body.textContent;
+                    
+                    console.log('ได้รับ response อัพเดทจาก iframe:', iframeContent);
+                    
+                    if (iframeContent) {
+                        try {
+                            const data = JSON.parse(iframeContent);
+                            
+                            if (data.success) {
+                                showMessage('อัพเดทสถานะบิลเรียบร้อยแล้ว', 'success');
+                                
+                                // อัพเดท UI
+                                billStatus.textContent = 'รับบิลแล้ว';
+                                billStatus.className = 'bill-status received';
+                                
+                                // อัพเดทวันที่ในข้อมูลบิล
+                                const updateDate = data.updateDate || new Date().toLocaleDateString('th-TH', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                });
+                                
+                                // อัพเดทข้อมูลใน UI
+                                const detailItems = document.querySelectorAll('.detail-item');
+                                detailItems[4].querySelector('.detail-value').textContent = 'รับบิลแล้ว';
+                                detailItems[5].querySelector('.detail-value').textContent = updateDate;
+                                
+                                // ซ่อนส่วนอัพเดท
+                                document.getElementById('updateSection').style.display = 'none';
+                            } else {
+                                showMessage('เกิดข้อผิดพลาดในการอัพเดท: ' + data.message, 'error');
+                            }
+                        } catch (e) {
+                            console.error('Error parsing response:', e);
+                            showMessage('เกิดข้อผิดพลาดในการอ่านข้อมูล', 'error');
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error accessing iframe:', e);
+                    showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+                } finally {
+                    // รีเซ็ตปุ่มอัพเดท
+                    updateBtn.innerHTML = '<i class="fas fa-check-circle"></i> อัพเดทสถานะเป็น "รับบิลแล้ว"';
+                    updateBtn.disabled = true;
+                    confirmCheckbox.checked = false;
+                    
+                    // รีเซ็ต onload
+                    this.onload = null;
+                }
+            };
+            
+            // ส่ง form
+            form.submit();
         }
         
         // ฟังก์ชันแสดงข้อมูลบิล
@@ -499,147 +707,20 @@
             message.style.display = 'none';
         }
         
-        // ฟังก์ชันค้นหาบิล
-        async function searchBill() {
-            const lastDigits = lastDigitsInput.value.trim();
-            
-            if (!lastDigits) {
-                showMessage('กรุณากรอกตัวเลข 5 ตัวท้ายก่อนค้นหา', 'error');
-                return;
-            }
-            
-            // ตรวจสอบรูปแบบตัวเลข
-            if (!validateLastDigits(lastDigits)) {
-                showMessage('กรุณากรอกตัวเลข 5 หลักเท่านั้น (เช่น 12345)', 'error');
-                return;
-            }
-            
-            // แสดงสถานะกำลังโหลด
-            searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังค้นหา...';
-            searchBtn.disabled = true;
-            
-            try {
-                const response = await fetch(`${SCRIPT_URL}?action=searchByLastDigits&lastDigits=${encodeURIComponent(lastDigits)}`);
-                const data = await response.json();
-                
-                console.log('ผลการค้นหา:', data);
-                
-                if (data.success) {
-                    if (data.billData) {
-                        displayBillData(data.billData);
-                        showMessage('พบข้อมูลบิลเรียบร้อยแล้ว', 'success');
-                    } else {
-                        showMessage('ไม่พบข้อมูลบิลที่ค้นหา', 'error');
-                        resultSection.classList.remove('active');
-                        emptyState.style.display = 'block';
-                        emptyState.innerHTML = `
-                            <i class="fas fa-search"></i>
-                            <h3>ไม่พบข้อมูลบิลเลขท้าย "${lastDigits}"</h3>
-                            <p>กรุณาตรวจสอบตัวเลข 5 หลักและลองอีกครั้ง</p>
-                        `;
-                    }
-                } else {
-                    showMessage('เกิดข้อผิดพลาดในการค้นหา: ' + data.message, 'error');
-                }
-            } catch (error) {
-                console.error('Error searching bill:', error);
-                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์', 'error');
-            } finally {
-                // รีเซ็ตปุ่มค้นหา
-                searchBtn.innerHTML = '<i class="fas fa-search"></i> ค้นหาบิล';
-                searchBtn.disabled = false;
-            }
-        }
-        
-        // ฟังก์ชันอัพเดทสถานะบิล
-        async function updateBillStatus() {
-            const lastDigits = lastDigitsInput.value.trim();
-            
-            if (!lastDigits) {
-                showMessage('ไม่พบเลขท้ายบิลสำหรับอัพเดท', 'error');
-                return;
-            }
-            
-            // แสดงสถานะกำลังโหลด
-            updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังอัพเดท...';
-            updateBtn.disabled = true;
-            
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'updateByLastDigits',
-                        lastDigits: lastDigits,
-                        status: 'รับบิลแล้ว'
-                    })
-                });
-                
-                const data = await response.json();
-                
-                console.log('ผลการอัพเดท:', data);
-                
-                if (data.success) {
-                    showMessage('อัพเดทสถานะบิลเรียบร้อยแล้ว', 'success');
-                    
-                    // อัพเดท UI ให้สะท้อนการเปลี่ยนแปลง
-                    billStatus.textContent = 'รับบิลแล้ว';
-                    billStatus.className = 'bill-status received';
-                    
-                    // อัพเดทวันที่ในข้อมูลบิล
-                    const updateDate = data.updateDate || new Date().toLocaleDateString('th-TH', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    
-                    // อัพเดทข้อมูลใน UI
-                    const detailItems = document.querySelectorAll('.detail-item');
-                    detailItems[4].querySelector('.detail-value').textContent = 'รับบิลแล้ว';
-                    detailItems[5].querySelector('.detail-value').textContent = updateDate;
-                    
-                    // ซ่อนส่วนอัพเดท
-                    document.getElementById('updateSection').style.display = 'none';
-                    
-                    // แสดงข้อมูลบิลที่อัพเดทแล้ว (ถ้ามี)
-                    if (data.billData) {
-                        displayBillData(data.billData);
-                    }
-                } else {
-                    showMessage('เกิดข้อผิดพลาดในการอัพเดท: ' + data.message, 'error');
-                }
-            } catch (error) {
-                console.error('Error updating bill:', error);
-                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์', 'error');
-            } finally {
-                // รีเซ็ตปุ่มอัพเดท
-                updateBtn.innerHTML = '<i class="fas fa-check-circle"></i> อัพเดทสถานะเป็น "รับบิลแล้ว"';
-                updateBtn.disabled = true;
-                confirmCheckbox.checked = false;
-            }
-        }
-        
         // ฟังก์ชันแสดงข้อความ
         function showMessage(text, type) {
             message.textContent = text;
             message.className = `message ${type}`;
             message.style.display = 'block';
             
-            // ซ่อนข้อความหลังจาก 5 วินาที (ยกเว้นข้อความ error)
-            if (type !== 'error') {
-                setTimeout(() => {
-                    message.style.display = 'none';
-                }, 5000);
-            }
+            // ซ่อนข้อความหลังจาก 5 วินาที
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
         }
         
         // Event Listeners
         searchBtn.addEventListener('click', searchBill);
-        
         lastDigitsInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 searchBill();
@@ -657,27 +738,9 @@
         
         updateBtn.addEventListener('click', updateBillStatus);
         
-        // ฟังก์ชันทดสอบระบบ
-        function testSystem() {
-            console.log('ระบบค้นหาบิลด้วยตัวเลข 5 ตัวท้ายพร้อมใช้งาน');
-            console.log('URL ของ Google Apps Script:', SCRIPT_URL);
-            
-            // แสดงข้อความแนะนำ
-            showMessage('กรุณากรอกตัวเลข 5 หลักเช่น 12345, 67890 เพื่อเริ่มต้นการค้นหา', 'info');
-        }
-        
-        // เรียกใช้เมื่อโหลดหน้าเว็บเสร็จ
-        window.addEventListener('DOMContentLoaded', testSystem);
-        
-        // ฟังก์ชันทดสอบแบบอัตโนมัติ (สำหรับ Debug)
-        function autoTest() {
-            // ทดสอบค้นหาบิล 12345
-            lastDigitsInput.value = '12345';
-            searchBill();
-        }
-        
-        // สามารถเรียก autoTest() เพื่อทดสอบอัตโนมัติ
-        // autoTest(); // ถอนคอมเมนต์เพื่อทดสอบอัตโนมัติ
+        // เริ่มต้น
+        console.log('ระบบค้นหาบิลพร้อมใช้งาน');
+        showMessage('กรุณากรอกตัวเลข 5 หลักเช่น 12345 เพื่อเริ่มต้นการค้นหา', 'info');
     </script>
 </body>
 </html>
