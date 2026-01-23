@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบค้นหาบิล - โทนสีม่วง</title>
+    <title>ระบบค้นหาบิล</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -362,31 +362,21 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-file-invoice"></i> ระบบค้นหาบิล</h1>
-            <p class="subtitle">ค้นหาบิลด้วยตัวเลข 5 ตัวท้ายในคอลัมน์ A</p>
+            <p class="subtitle">ค้นหาใบเสร็จ</p>
         </header>
         
         <section class="search-section">
             <div class="search-box">
-                <input type="text" id="lastDigits" class="search-input" placeholder="กรอกตัวเลข 5 ตัวท้ายของบิล (เช่น 12345, 67890, ...)" autocomplete="off">
+                <input type="text" id="lastDigits" class="search-input" placeholder="กรอกตัวเลข 5 ตัวท้ายของบิล " autocomplete="off">
                 <button id="searchBtn" class="search-btn">
                     <i class="fas fa-search"></i> ค้นหาบิล
                 </button>
             </div>
             <div class="instructions">
-                <i class="fas fa-info-circle"></i> ระบบจะค้นหาบิลจากตัวเลข 5 ตัวท้ายในคอลัมน์ A ของ Google Sheets หากพบข้อมูลจะแสดงรายละเอียดบิล และสามารถอัพเดทสถานะเป็น "รับบิลแล้ว" พร้อมบันทึกวันที่อัพเดทได้
+                <i class="fas fa-info-circle"></i> ระบบจะค้นหาบิลจากตัวเลข หากพบข้อมูลจะแสดงรายละเอียดบิล และสามารถอัพเดทสถานะเป็น "รับบิลแล้ว" พร้อมบันทึกวันที่อัพเดทได้
             </div>
             <div class="test-mode-notice">
                 <i class="fas fa-exclamation-circle"></i> กำลังใช้โหมดทดสอบ: ระบบกำลังใช้ข้อมูลจำลองเนื่องจาก Google Apps Script ยังไม่รองรับการค้นหาตามตัวเลข 5 ตัวท้าย
-            </div>
-            <div class="test-data">
-                <h4><i class="fas fa-vial"></i> ข้อมูลทดสอบสำหรับค้นหา:</h4>
-                <ul>
-                    <li><strong>12345</strong> - บิล A001, สถานที่: สำนักงานใหญ่</li>
-                    <li><strong>67890</strong> - บิล B002, สถานที่: สาขาหลัก</li>
-                    <li><strong>54321</strong> - บิล C003, สถานที่: ศูนย์กระจายสินค้า</li>
-                    <li><strong>98765</strong> - บิล D004, สถานที่: โครงการใหม่</li>
-                    <li><strong>11223</strong> - บิล E005, สถานที่: สำนักงานสาขา</li>
-                </ul>
             </div>
         </section>
         
@@ -420,8 +410,8 @@
         </div>
         
         <footer>
-            <p>ระบบเชื่อมต่อกับ Google Sheets | โทนสีม่วงขาว | สำหรับใช้บน GitHub</p>
-            <p>© 2023 ระบบจัดการบิลด้วย HTML</p>
+            <p>ระบบค้นหาใบเสร็จรับเงิน  © 2026 | พัฒนาโดย Sarawut.C</p>
+            <p>สำหรับใช้ส่วนตัวเท่านั้น เพื่อง่ายต่อการทำงาน</p>
         </footer>
     </div>
     
