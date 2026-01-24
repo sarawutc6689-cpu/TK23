@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เพิ่มข้อมูลบิล</title>
+
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{
+  margin:0;
+  background:linear-gradient(135deg,#f3ecff,#ffffff);
+  min-height:100vh;
+}
+.container{
+  max-width:600px;
+  margin:60px auto;
+  background:#fff;
+  padding:35px;
+  border-radius:22px;
+  box-shadow:0 18px 45px rgba(138,43,226,.18);
+}
+h1{
+  text-align:center;
+  color:#6a0dad;
+  margin-bottom:25px;
+}
+.form-group{
+  margin-bottom:18px;
+}
+label{
+  display:block;
+  margin-bottom:6px;
+  color:#8a6dd8;
+  font-weight:600;
+}
+input,textarea{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:2px solid #e3d7ff;
+  font-size:1rem;
+}
+input:focus,textarea:focus{
+  outline:none;
+  border-color:#8a2be2;
+  box-shadow:0 0 0 4px rgba(138,43,226,.15);
+}
+textarea{resize:vertical}
+button{
+  width:100%;
+  background:linear-gradient(135deg,#8a2be2,#9370db);
+  color:#fff;
+  border:none;
+  padding:16px;
+  border-radius:16px;
+  font-size:1.05rem;
+  font-weight:600;
+  cursor:pointer;
+}
+.message{
+  margin-top:20px;
+  text-align:center;
+  font-weight:600;
+}
+.nav{
+  text-align:center;
+  margin-top:20px;
+}
+.nav a{
+  color:#6a0dad;
+  font-weight:600;
+  text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>➕ เพิ่มข้อมูลบิล</h1>
+
+  <div class="form-group">
+    <label>เลขที่บิล *</label>
+    <input id="billNo" placeholder="เช่น INV-2024-001">
+  </div>
+
+  <div class="form-group">
+    <label>สถานที่ *</label>
+    <input id="place" placeholder="เช่น สำนักงานใหญ่">
+  </div>
+
+  <div class="form-group">
+    <label>รายละเอียด</label>
+    <textarea id="detail" rows="3"></textarea>
+  </div>
+
+  <button onclick="save()">บันทึกข้อมูล</button>
+
+  <div id="msg" class="message"></div>
+
+  <div class="nav">
+    <a href="index.html">← กลับหน้าค้นหาบิล</a>
+  </div>
+</div>
+
+<script>
+const SCRIPT_URL = "PUT_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+
+async function save(){
+  msg.textContent = "";
+  msg.style.color = "";
+
+  const billNo = document.getElementById("billNo").value.trim();
+  const place = document.getElementById("place").value.trim();
+  const detail = document.getElementById("detail").value.trim();
+
+  if(!billNo || !place){
+    msg.style.color="red";
+    msg.textContent="กรุณากรอกข้อมูลที่จำเป็น";
+    return;
+  }
+
+  const res = await fetch(SCRIPT_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"add",
+      billNo,
+      place,
+      detail
+    })
+  });
+
+  const data = await res.json();
+
+  if(data.success){
+    msg.style.color="green";
+    msg.textContent="บันทึกข้อมูลเรียบร้อยแล้ว";
+    billNo.value = place.value = detail.value = "";
+  }else{
+    msg.style.color="red";
+    msg.textContent=data.message;
+  }
+}
+</script>
+</body>
+</html>
